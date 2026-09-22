@@ -1,5 +1,6 @@
 import argparse
 from datetime import date
+from importlib import resources
 from jinja2 import Environment, FileSystemLoader
 import json
 import yaml
@@ -10,23 +11,28 @@ import re
 import statistics
 import tomllib
 
+# Bundled package data (templates, CSS, taxonomy mapping, default config)
+DATA_DIR = resources.files("trana_vy") / "data"
+
 def main():
     argp = argparse.ArgumentParser()
     argp.add_argument("-i", "--input-dir", type=str, required=True, help="Path to the input directory containing results")
     argp.add_argument("-o", "--output-file", type=str, required=True, help="Path to the output report file")
     argp.add_argument("-s", "--sample-name", type=str, required=True, help="Name of the sample")
     argp.add_argument("-n", "--neg-control", type=str, required=True, help="Name of the negative control")
-    argp.add_argument("-c", "--config", type=str, default="configs/config.toml", help="Path to config file")
+    argp.add_argument("-c", "--config", type=str, default="configs/config.toml", help="Path to config file. Default is configs/config.toml")
     argp.add_argument("-p", "--prob-score", action="store_true", help="Include probability score in the report")
     argp.add_argument("-m", "--alignment-metrics", action="store_true", help="Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage)")
 
     args = argp.parse_args()
+    if args.config is None:
+        args.config = str(DATA_DIR / "configs" / "config.toml")
 
     # Read CSS file content
-    with open("static/style.css", "r") as f:
+    with open(DATA_DIR / "static" / "style.css", "r") as f:
         css_content = f.read()
 
-    env = Environment(loader=FileSystemLoader("templates"))
+    env = Environment(loader=FileSystemLoader(str(DATA_DIR / "templates")))
     template = env.get_template("report.html.j2")
 
     # Set low abundance cutoff value
@@ -410,7 +416,9 @@ def calculate_align_stats(query_len,
 
 
 class TaxTranslator(object):
-    def __init__(self, taxonomy_path="taxonomy.tsv"):
+    def __init__(self, taxonomy_path=None):
+        if taxonomy_path is None:
+            taxonomy_path = DATA_DIR / "taxonomy.tsv"
         self._taxdf = pd.read_csv(taxonomy_path, sep="\t", dtype=str).set_index("tax_id")
         self._taxid_to_label_mapping = {
             tax_id: self.get_best_tax_label(row) for tax_id, row in self._taxdf.iterrows()
