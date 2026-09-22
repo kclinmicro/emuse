@@ -1,3 +1,18 @@
+Metadata-Version: 2.4
+Name: trana-vy
+Version: 0.1.0
+Summary: Report generator for the TRANA 16S rRNA taxonomic profiling pipeline
+License-Expression: MIT
+Project-URL: Homepage, https://github.com/kclinmicro/TranaVy
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: jinja2
+Requires-Dist: pandas
+Requires-Dist: pyyaml
+Requires-Dist: pysam
+Dynamic: license-file
+
 # TranaVy
 
 This repository contains a small reporting tool for generating a static HTML

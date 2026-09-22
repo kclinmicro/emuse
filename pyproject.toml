@@ -1,6 +1,14 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "16s-report"
+name = "trana-vy"
 version = "0.1.0"
+description = "Report generator for the TRANA 16S rRNA taxonomic profiling pipeline"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.11"
 dependencies = [
   "jinja2",
@@ -8,12 +16,19 @@ dependencies = [
   "pyyaml",
   "pysam",
 ]
+
+[project.urls]
+Homepage = "https://github.com/kclinmicro/TranaVy"
+
+[project.scripts]
+trana-vy = "trana_vy.make_report:main"
+
 [tool.pixi.workspace]
 channels = ["conda-forge", "bioconda"]
 platforms = ["linux-64"]
 
 [tool.pixi.pypi-dependencies]
-16s-report = { path = ".", editable = true }
+trana-vy = { path = ".", editable = true }
 
 [tool.pixi.tasks]
 
@@ -28,4 +43,8 @@ pytest = ">=9.0.3,<10"
 minimap2 = ">=2.30,<3"
 
 [tool.setuptools.packages.find]
-include = []
+include = ["trana_vy*"]
+
+[tool.setuptools.package-data]
+trana_vy = ["data/**/*"]
+

@@ -1,0 +1,2 @@
+recursive-include trana_vy/data *
+include LICENSE README.md
