@@ -1,0 +1,17 @@
+LICENSE
+MANIFEST.in
+README.md
+pyproject.toml
+tests/test_make_report.py
+trana_vy/__init__.py
+trana_vy/make_report.py
+trana_vy.egg-info/PKG-INFO
+trana_vy.egg-info/SOURCES.txt
+trana_vy.egg-info/dependency_links.txt
+trana_vy.egg-info/entry_points.txt
+trana_vy.egg-info/requires.txt
+trana_vy.egg-info/top_level.txt
+trana_vy/data/taxonomy.tsv
+trana_vy/data/configs/config.toml
+trana_vy/data/static/style.css
+trana_vy/data/templates/report.html.j2

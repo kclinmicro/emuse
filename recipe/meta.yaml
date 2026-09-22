@@ -1,0 +1,45 @@
+{% set name = "trana-vy" %}
+{% set version = "0.1.0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  # Update the sha256 after tagging a release, e.g.:
+  #   curl -sL https://github.com/kclinmicro/TranaVy/archive/refs/tags/v{{ version }}.tar.gz | sha256sum
+  url: https://github.com/kclinmicro/TranaVy/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: REPLACE_WITH_SHA256_OF_RELEASE_TARBALL
+
+build:
+  noarch: python
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  entry_points:
+    - trana-vy = trana_vy.make_report:main
+
+requirements:
+  host:
+    - python >=3.11
+    - pip
+    - setuptools >=64
+  run:
+    - python >=3.11
+    - jinja2
+    - pandas
+    - pyyaml
+    - pysam
+
+test:
+  commands:
+    - trana-vy --help
+
+about:
+  home: https://github.com/kclinmicro/TranaVy
+  summary: Report generator for the TRANA 16S rRNA taxonomic profiling pipeline
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - kclinmicro
