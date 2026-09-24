@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/kclinmicro/TranaVy"
+Homepage = "https://github.com/kclinmicro/emuse"
 
 [project.scripts]
 emuse = "emuse.make_report:main"
