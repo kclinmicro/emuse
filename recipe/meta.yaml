@@ -38,8 +38,15 @@ test:
 about:
   home: https://github.com/kclinmicro/TranaVy
   summary: Report generator for the TRANA 16S rRNA taxonomic profiling pipeline
+  description: |
+    Emuse parses and reports on taxonomic abundance and alignment output
+    produced by Emu (https://github.com/treangenlab/emu), which is run as
+    part of the upstream TRANA pipeline. See THIRD_PARTY_LICENSES.txt for
+    Emu's license and attribution.
   license: MIT
-  license_file: LICENSE
+  license_file:
+    - LICENSE
+    - THIRD_PARTY_LICENSES.txt
 
 extra:
   recipe-maintainers:
