@@ -4,9 +4,12 @@ This repository contains Emuse, a small reporting tool for generating a static
 HTML report from taxonomic abundance results produced by
 [Emu](https://github.com/treangenlab/emu), currently as part of the
 [TRANA](https://github.com/genomic-medicine-sweden/TRANA) 16S rRNA taxonomic
-profiling pipeline. Support for generating reports directly from a standalone
+profiling pipeline. TRANA uses [EMU](https://github.com/treangenlab/emu) for 
+species-level taxonomic abundance estimation from full-length 16S reads. 
+Support for generating reports directly from a standalone
 `emu abundance` run (without TRANA) is planned for a future release; see
 [Roadmap](#roadmap).
+
 
 The script parses pipeline outputs and renders a human-readable summary report
 using a Jinja2 HTML template and CSS styling.
