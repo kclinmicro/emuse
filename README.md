@@ -1,9 +1,12 @@
 # TranaVy
 
-This repository contains a small reporting tool for generating a static HTML
-report from results produced by the
-[TRANA](https://github.com/genomic-medicine-sweden/TRANA) taxonomic profiling
-pipeline for 16S rRNA reads.
+This repository contains Emuse, a small reporting tool for generating a static
+HTML report from taxonomic abundance results produced by
+[Emu](https://github.com/treangenlab/emu), currently as part of the
+[TRANA](https://github.com/genomic-medicine-sweden/TRANA) 16S rRNA taxonomic
+profiling pipeline. Support for generating reports directly from a standalone
+`emu abundance` run (without TRANA) is planned for a future release; see
+[Roadmap](#roadmap).
 
 The script parses pipeline outputs and renders a human-readable summary report
 using a Jinja2 HTML template and CSS styling.
@@ -22,6 +25,7 @@ using a Jinja2 HTML template and CSS styling.
 | `pyproject.toml`                  | Configuration file including tool dependecies for the project.                                   |
 | `tests/test_make_report.py`       | Minimal test python script for alignment metrics                                                 |
 | `recipe/meta.yaml`                | Draft bioconda recipe                                                                             |
+| `THIRD_PARTY_LICENSES.txt`        | License and attribution for third-party tools whose output this project parses (Emu)             |
 
 ## Setup
 
@@ -92,6 +96,12 @@ emuse \
 | `--config`            | `-c`  | No       | Path to configuration file (default: `config.toml`)                                                         |
 | `--prob-score`        | `-p`  | No       | Include the generation and addition of probability scores in the report                                     |
 | `--alignment-metrics` | `-m`  | No       | Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage) |
+
+### Roadmap
+
+Emuse currently expects a TRANA pipeline run directory. A future release will
+add support for generating reports directly from the output of a plain `emu
+abundance` call (without requiring TRANA).
 
 ### Customization
 
