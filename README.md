@@ -1,4 +1,4 @@
-# TranaVy
+# Emuse
 
 This repository contains Emuse, a small reporting tool for generating a static
 HTML report from taxonomic abundance results produced by
