@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- Documented plans to support generating reports directly from raw Emu
+  output, not just from a TRANA pipeline run (see the README "Roadmap"
+  section).
 ### Changed
 
 - Restructured the project into an installable `emuse` Python package to
@@ -25,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LICENSE` (MIT).
 - `MANIFEST.in` for sdist packaging.
 - Draft bioconda recipe at `recipe/meta.yaml`.
+- `THIRD_PARTY_LICENSES.txt` and a README "Acknowledgements" section crediting
+  [Emu](https://github.com/treangenlab/emu) (MIT licensed), whose output this
+  project parses and reports on.
 
 ## [0.1.0]
 
