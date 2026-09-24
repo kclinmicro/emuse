@@ -16,19 +16,19 @@ using a Jinja2 HTML template and CSS styling.
 
 ## Repository Contents
 
-| File                              | Description                                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `emuse/make_report.py`            | Python script that parses pipeline output and generates the report                               |
-| `emuse/data/configs/config.toml`  | Default configuration file for customizing report generation                                     |
+| File                                  | Description                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `emuse/make_report.py`                | Python script that parses pipeline output and generates the report                               |
+| `emuse/data/configs/config.toml`      | Default configuration file for customizing report generation                                     |
 | `emuse/data/templates/report.html.j2` | Jinja2 template used to render the HTML report                                                   |
-| `emuse/data/static/style.css`     | CSS styling for the report                                                                       |
-| `emuse/data/taxonomy.tsv`         | TSV file with mapping of taxonomic ids to species                                                |
-| `output/`                         | Directory where the generated HTML report (`report.html`) will be saved after running the script |
-| `README.md`                       | Project documentation                                                                            |
-| `pyproject.toml`                  | Configuration file including tool dependecies for the project.                                   |
-| `tests/test_make_report.py`       | Minimal test python script for alignment metrics                                                 |
-| `recipe/meta.yaml`                | Draft bioconda recipe                                                                             |
-| `THIRD_PARTY_LICENSES.txt`        | License and attribution for third-party tools whose output this project parses (Emu)             |
+| `emuse/data/static/style.css`         | CSS styling for the report                                                                       |
+| `emuse/data/taxonomy.tsv`             | TSV file with mapping of taxonomic ids to species                                                |
+| `output/`                             | Directory where the generated HTML report (`report.html`) will be saved after running the script |
+| `README.md`                           | Project documentation                                                                            |
+| `pyproject.toml`                      | Configuration file including tool dependecies for the project.                                   |
+| `tests/test_make_report.py`           | Minimal test python script for alignment metrics                                                 |
+| `recipe/meta.yaml`                    | Draft bioconda recipe                                                                            |
+| `THIRD_PARTY_LICENSES.txt`            | License and attribution for third-party tools whose output this project parses (Emu)             |
 
 ## Setup
 
