@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documented plans to support generating reports directly from raw Emu
   output, not just from a TRANA pipeline run (see the README "Roadmap"
   section).
+  
 ### Changed
 
 - Restructured the project into an installable `emuse` Python package to

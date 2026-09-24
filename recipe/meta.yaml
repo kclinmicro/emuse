@@ -7,8 +7,8 @@ package:
 
 source:
   # Update the sha256 after tagging a release, e.g.:
-  #   curl -sL https://github.com/kclinmicro/TranaVy/archive/refs/tags/v{{ version }}.tar.gz | sha256sum
-  url: https://github.com/kclinmicro/TranaVy/archive/refs/tags/v{{ version }}.tar.gz
+  #   curl -sL https://github.com/kclinmicro/emuse/archive/refs/tags/v{{ version }}.tar.gz | sha256sum
+  url: https://github.com/kclinmicro/emuse/archive/refs/tags/v{{ version }}.tar.gz
   sha256: REPLACE_WITH_SHA256_OF_RELEASE_TARBALL
 
 build:
@@ -36,7 +36,7 @@ test:
 
 
 about:
-  home: https://github.com/kclinmicro/TranaVy
+  home: https://github.com/kclinmicro/emuse
   summary: Report generator for the TRANA 16S rRNA taxonomic profiling pipeline
   description: |
     Emuse parses and reports on taxonomic abundance and alignment output
