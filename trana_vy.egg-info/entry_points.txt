@@ -1,2 +1,0 @@
-[console_scripts]
-trana-vy = trana_vy.make_report:main

@@ -1,2 +1,2 @@
-recursive-include trana_vy/data *
+recursive-include emuse/data *
 include LICENSE README.md

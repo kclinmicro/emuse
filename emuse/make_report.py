@@ -12,7 +12,7 @@ import statistics
 import tomllib
 
 # Bundled package data (templates, CSS, taxonomy mapping, default config)
-DATA_DIR = resources.files("trana_vy") / "data"
+DATA_DIR = resources.files("emuse") / "data"
 
 def main():
     argp = argparse.ArgumentParser()

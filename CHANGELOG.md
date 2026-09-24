@@ -9,13 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Restructured the project into an installable `trana_vy` Python package to
+- Restructured the project into an installable `emuse` Python package to
   prepare for packaging as a bioconda recipe:
   - Moved `make_report.py`, `templates/`, `static/`, `configs/`, and
-    `taxonomy.tsv` into `trana_vy/` (bundled under `trana_vy/data/`).
+    `taxonomy.tsv` into `emuse/` (bundled under `emuse/data/`).
   - Moved `make_report_test.py` to `tests/test_make_report.py`.
-  - Added a `trana-vy` console script entry point.
-  - Renamed the distribution name from `16s-report` to `trana-vy`.
+  - Added an `emuse` console script entry point.
+  - Renamed the distribution/CLI name from `16s-report`/`make_report.py` to
+    `emuse`.
 - `pyproject.toml` now declares a proper `[build-system]`, package data, and
   MIT license metadata.
 
