@@ -12,11 +12,11 @@ using a Jinja2 HTML template and CSS styling.
 
 | File                              | Description                                                                                      |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `trana_vy/make_report.py`         | Python script that parses pipeline output and generates the report                               |
-| `trana_vy/data/configs/config.toml` | Default configuration file for customizing report generation                                     |
-| `trana_vy/data/templates/report.html.j2` | Jinja2 template used to render the HTML report                                                   |
-| `trana_vy/data/static/style.css`  | CSS styling for the report                                                                       |
-| `trana_vy/data/taxonomy.tsv`      | TSV file with mapping of taxonomic ids to species                                                |
+| `emuse/make_report.py`            | Python script that parses pipeline output and generates the report                               |
+| `emuse/data/configs/config.toml`  | Default configuration file for customizing report generation                                     |
+| `emuse/data/templates/report.html.j2` | Jinja2 template used to render the HTML report                                                   |
+| `emuse/data/static/style.css`     | CSS styling for the report                                                                       |
+| `emuse/data/taxonomy.tsv`         | TSV file with mapping of taxonomic ids to species                                                |
 | `output/`                         | Directory where the generated HTML report (`report.html`) will be saved after running the script |
 | `README.md`                       | Project documentation                                                                            |
 | `pyproject.toml`                  | Configuration file including tool dependecies for the project.                                   |
@@ -42,14 +42,14 @@ This project uses dependencies defined in pyproject.toml and requires Python
 pip install .
 ```
 
-This installs the `trana-vy` command-line tool.
+This installs the `emuse` command-line tool.
 
 ## Usage
 
 Run the report generator using the installed command:
 
 ```bash
-trana-vy --input-dir <results_directory> \
+emuse --input-dir <results_directory> \
                  --output-file <output_file> \
                  --sample-name <sample_name> \
                  --neg-control <negative_control_name> \
@@ -61,7 +61,7 @@ trana-vy --input-dir <results_directory> \
 ### Example
 Generating a minimal report:
 ```bash
-trana-vy \
+emuse \
   --input-dir results/sample_01 \
   --output-file output/sample_01_report.html \
   --sample-name sample_01 \
@@ -71,7 +71,7 @@ trana-vy \
 
 Generating a report with probability scores and alignment metrics:
 ```bash
-trana-vy \
+emuse \
   --input-dir results/sample_01 \
   --output-file output/sample_01_report.html \
   --sample-name sample_01 \
@@ -98,7 +98,7 @@ trana-vy \
 The report can be customized to the users spike species by editing the already
 existing, or creating a new, `config.toml` file and supplying it through
 `--config` (`-c`). When `--config` is omitted, the bundled default config
-(`trana_vy/data/configs/config.toml`) is used.
+(`emuse/data/configs/config.toml`) is used.
 Define all spike species in the `spike_species` list. The species used for normalisation is specified separately using `normalising_spike_species`, which must correspond to one of the entries in the `spike_species` list.
 
 ### Output

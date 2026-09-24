@@ -1,7 +1,7 @@
 # TBC ...
 import subprocess as sp
 
-from make_report import calculate_align_stats, get_align_stats
+from emuse.make_report import calculate_align_stats, get_align_stats
 import pysam
 from pytest import fail
 import tempfile

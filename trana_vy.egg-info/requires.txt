@@ -1,4 +1,0 @@
-jinja2
-pandas
-pyyaml
-pysam
