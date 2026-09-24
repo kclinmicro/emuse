@@ -1,4 +1,4 @@
-{% set name = "trana-vy" %}
+{% set name = "emuse" %}
 {% set version = "0.1.0" %}
 
 package:
@@ -16,7 +16,7 @@ build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
-    - trana-vy = trana_vy.make_report:main
+    - emuse = emuse.make_report:main
 
 requirements:
   host:
@@ -32,7 +32,8 @@ requirements:
 
 test:
   commands:
-    - trana-vy --help
+    - emuse --help
+
 
 about:
   home: https://github.com/kclinmicro/TranaVy
