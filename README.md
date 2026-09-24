@@ -161,3 +161,9 @@ A table summarizing the negative control sample, with the same first 6 columns a
 **Color coding:**
 
 - **Purple rows** indicate spike species
+
+## Citations
+- [EMU](https://github.com/treangenlab/emu)
+  > Kristen D. Curry et al., “Emu: Species-Level Microbial Community Profiling
+  > of Full-Length 16S RRNA Oxford Nanopore Sequencing Data,” Nature Methods,
+  > June 30, 2022, 1–9, https://doi.org/10.1038/s41592-022-015>
