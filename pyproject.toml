@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emuse"
-version = "0.1.0"
+version = "1.1.0"
 description = "Report generator for the TRANA 16S rRNA taxonomic profiling pipeline"
 readme = "README.md"
 license = "MIT"

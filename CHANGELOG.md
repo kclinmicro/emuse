@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0]
 
 ### Documentation
 
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [Emu](https://github.com/treangenlab/emu) (MIT licensed), whose output this
   project parses and reports on.
 
-## [0.1.0]
+## [1.0.0]
 
 - Initial release of the report generator for the TRANA 16S rRNA taxonomic
-  profiling pipeline.
+  profiling pipeline, including assignment metrics and tests.
