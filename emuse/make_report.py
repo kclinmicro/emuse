@@ -385,17 +385,42 @@ def calculate_align_stats(query_len,
                           soft_clips):
     """
     Return identity and coverage against the reference sequence
+
+    Note that the identity in this calculation differs from the one in BLAST.
+    While BLAST's identity measure does not count indels and instead divides
+    the number of identical bases over the number of aligned bases, the
+    identity metric below includes each aligned column corresponding to a base
+    pair position in the reference or read, and counts the number of matches
+    (identical bases) across the total aligned length, which is the length
+    where gaps in both the reference and query are included.
+
+    Args:
+        query_len: The length in base pairs of the query sequence.
+        query_alignment_len: The length in base pairs of the part of the query
+            sequence covered by the alignment.
+        reference_len: The length in base pairs of the reference sequence.
+        reference_alignment_len: The length in base pairs of the part of the
+            reference sequence covered by the alignment.
+        insertions: Number of insertions measured in base pairs.
+        deletions: Number of deletions measured in base pairs.
+        edit_distance: Edit distance corresponding to the NM tag in SAM files.
+        soft_clips: Bases in the ends of the alignment which do not align.
+
+    Returns:
+        identity: Identity as matching bases across the alignment length which
+            contains both insertions and deletions.
+        coverage: Percent of bases of the reference length covered by the
+            alignment.
     """
 
     # ------------------------------------------------
     # Calculate identity
     # ------------------------------------------------
-    # TODO: Need to update, to follow some best practice, like BLAST-style
     matches = 0
     mismatches = 0
     if edit_distance is not None:
         mismatches = edit_distance - insertions - deletions
-        matches = query_alignment_len - deletions - mismatches
+        matches = query_alignment_len - insertions - mismatches
 
     # We can not normalize over query or reference length, as these
     # won't contain either insertions or deletions
