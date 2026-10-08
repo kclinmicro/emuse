@@ -2,7 +2,8 @@
 import subprocess as sp
 from importlib.metadata import version
 
-from emuse.make_report import calculate_align_stats, get_align_stats, main
+from emuse.make_report import main
+from emuse.alignment import calculate_align_stats, get_align_stats
 import pysam
 from pytest import fail, mark, raises
 import tempfile
