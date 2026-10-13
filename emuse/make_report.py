@@ -1,6 +1,7 @@
 import argparse
 from datetime import date
 from importlib import resources
+from importlib.metadata import version
 from jinja2 import Environment, FileSystemLoader
 import json
 import yaml
@@ -17,6 +18,7 @@ DEFAULT_CONFIG = DATA_DIR / "configs" / "config.toml"
 
 def main():
     argp = argparse.ArgumentParser()
+    argp.add_argument("-v", "--version", action="version", version=f"%(prog)s {version('emuse')}")
     argp.add_argument("-i", "--input-dir", type=str, required=True, help="Path to the input directory containing results")
     argp.add_argument("-o", "--output-file", type=str, required=True, help="Path to the output report file")
     argp.add_argument("-s", "--sample-name", type=str, required=True, help="Name of the sample")
@@ -110,7 +112,7 @@ def main():
 
     highlight = set(config.get("spike_species", []))
     normalising_spike_species = config.get("normalising_spike_species")
-    
+
     # Define function for spike species
     def highlight_species(row):
         if row["species"] in highlight:
@@ -122,18 +124,18 @@ def main():
         if row["species"] not in neg_control_ordered["species"].values:
             return ["background-color: #dcfce7"] * len(row)
         return [""] * len(row)
-    
+
     def low_abundance(row):
         if row["abundance"] < LOW_ABUNDANCE_CUTOFF:
             return ["color: #9ca3af"] * len(row)
         return [""] * len(row)
-    
+
     # Define function for species normalized against spike
     def normalised_abundance(row):
         # No spike configured -> do nothing
         if not normalising_spike_species:
             return [""] * len(row)
-        
+
         # Get abundance of spike in sample
         sample_spike= abundance_ordered.loc[
             abundance_ordered["species"] == normalising_spike_species, "abundance"
@@ -152,16 +154,16 @@ def main():
         # If any of these are empty, we can't do the calculation, so we return no highlight
         if sample_spike.empty or control_spike.empty or control_match.empty:
             return [""] * len(row)
-        
+
         # Normalise (species / spike) in sample and control, then compare
         sample_ratio = row["abundance"] / sample_spike.iloc[0]
         control_ratio = control_match.iloc[0] / control_spike.iloc[0]
 
         if control_ratio > 0 and sample_ratio > 25 * control_ratio:
             return ["background-color: #dcfce7"] * len(row)
-        
+
         return [""] * len(row)
-    
+
     # Apply functions for spike species and unique species
     styled_abundance = (abundance_assignment.style
         .apply(normalised_abundance, axis=1)
@@ -198,7 +200,7 @@ def main():
             "background-color": "#f2f2f2",
             "font-weight": "bold"
         })
-        .hide(axis="index")            
+        .hide(axis="index")
     )
     # Convert to html table
     neg_control_html_table = styled_neg_control.to_html(index=False, border=0, escape=False)

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [dev]
 
+### Added
+
+- [#28](https://github.com/kclinmicro/emuse/pull/28) Added `--version` (`-v`) to print the installed Emuse version and exit
+  without requiring report arguments, enabling version capture in Nextflow
+  workflows (by @rannick).
+
 ### Changed
 - [#24](https://github.com/kclinmicro/emuse/pull/24) Changed rows in Summary statistics, adding corrected rows for Number of reads before and after qc and downsampling (by @AnnaNoren)
 - [#26](https://github.com/kclinmicro/emuse/pull/26) Version is read from `emuse/__init__.py` (by @ryanjameskennedy)
@@ -86,6 +92,3 @@ profiling pipeline.
 - [#13](https://github.com/kclinmicro/emuse/issues/13)/[#14](https://github.com/kclinmicro/emuse/pull/14)
   Report layout now adapts its dimensions to the browser window instead of
   using a fixed size (by @AnnaNoren).
-
-
-

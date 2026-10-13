@@ -1,13 +1,27 @@
 # TBC ...
 import subprocess as sp
+from importlib.metadata import version
 
-from emuse.make_report import calculate_align_stats, get_align_stats
+from emuse.make_report import calculate_align_stats, get_align_stats, main
 import pysam
-from pytest import fail
+from pytest import fail, mark, raises
 import tempfile
 
 # An example sequence to be used in multiple tests
 seq = "CGGCTTAGAGGCGGCTGCGCGTAGTGCTGCTGATTATATTTCGGCGCTATATCGCTGATGATCGTCGATACGTACTGCTAGCTGCATCTGATCGATCGTC"
+
+
+@mark.parametrize("flag", ["-v", "--version"])
+def test_cli_version(flag, monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["emuse", flag])
+
+    with raises(SystemExit) as exit_info:
+        main()
+
+    assert exit_info.value.code == 0
+    output = capsys.readouterr()
+    assert output.out == f"emuse {version('emuse')}\n"
+    assert output.err == ""
 
 
 def test_get_align_stats():
