@@ -3,14 +3,15 @@ from datetime import date
 from importlib import resources
 from importlib.metadata import version
 from jinja2 import Environment, FileSystemLoader
-import json
-import yaml
 from pathlib import Path
-import pandas as pd
 import re
 import tomllib
 
+from emuse.abundance import read_rel_abundance
 from emuse.alignment import get_alignment_metrics
+from emuse.negative_control import absent_in_negative_control, is_enriched, is_low_abundance, is_spike
+from emuse.qc import load_multiqc_data, trana_version
+from emuse.read_assignment import read_assignment_summary
 
 # Bundled package data (templates, CSS, taxonomy mapping, default config)
 DATA_DIR = resources.files("emuse") / "data"
@@ -40,55 +41,15 @@ def main():
     LOW_ABUNDANCE_CUTOFF = 0.005
 
     # Load sample read assignment table
-    assignment = pd.read_csv(f"{args.input_dir}/results/{args.sample_name}_downsampled.fastq_read-assignment-distributions.tsv", sep="\t")
-    # Select all columns except the first one
-    assignment_filtered = assignment.iloc[:, 1:]
-    # Compute mean and median for each column
-    assignment_summary = assignment_filtered.agg(['median', 'mean']).T.reset_index()
-    # Rename columns
-    assignment_summary.columns = ['tax id', 'median probability*', 'mean probability*']
+    assignment_summary = read_assignment_summary(f"{args.input_dir}/results/{args.sample_name}_downsampled.fastq_read-assignment-distributions.tsv")
 
     # Load neg control abundance table
-    neg_control_abundance = pd.read_csv(f"{args.input_dir}/results/{args.neg_control}_downsampled.fastq_rel-abundance.tsv", sep="\t")
-    # Filter for wanted columns
-    neg_control_filtered = neg_control_abundance.iloc[:, list(range(5)) + [13]]
-    # Move the first column (taxid)
-    neg_control_switched = neg_control_filtered[neg_control_filtered.columns[1:5]
-        .append(neg_control_filtered.columns[:1])
-        .append(neg_control_filtered.columns[5:])]
-    # Rename col names
-    neg_control_switched = neg_control_switched.rename(
-        columns={
-            "estimated counts": "estimated read counts",
-            "tax_id": "tax id"
-        }
-    )
-    # Sort based on descending abundance
-    neg_control_ordered = neg_control_switched.sort_values(by="abundance", ascending=False)
-    # Re-index the table
-    neg_control_ordered = neg_control_ordered.reset_index(drop=True)
+    neg_control_ordered = read_rel_abundance(f"{args.input_dir}/results/{args.neg_control}_downsampled.fastq_rel-abundance.tsv")
     # Create fake index column for styling purposes (need it to start from 1 instead of 0)
     neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
 
     # Load sample abundance table
-    abundance = pd.read_csv(f"{args.input_dir}/results/{args.sample_name}_downsampled.fastq_rel-abundance.tsv", sep="\t")
-    # Filter for wanted columns
-    abundance_filtered = abundance.iloc[:, list(range(5)) + [13]]
-    # Move the first column (taxid)
-    abundance_switched = abundance_filtered[abundance_filtered.columns[1:5]
-        .append(abundance_filtered.columns[:1])
-        .append(abundance_filtered.columns[5:])]
-    # Rename col names
-    abundance_switched = abundance_switched.rename(
-        columns={
-            "estimated counts": "estimated read counts",
-            "tax_id": "tax id"
-        }
-    )
-    # Sort based on descending abundance
-    abundance_ordered = abundance_switched.sort_values(by="abundance", ascending=False)
-    # Re-index the table
-    abundance_ordered = abundance_ordered.reset_index(drop=True)
+    abundance_ordered = read_rel_abundance(f"{args.input_dir}/results/{args.sample_name}_downsampled.fastq_rel-abundance.tsv")
 
     # Merge abundance and assignment if prob_score is given
     if args.prob_score:
@@ -115,53 +76,25 @@ def main():
 
     # Define function for spike species
     def highlight_species(row):
-        if row["species"] in highlight:
+        if is_spike(row, highlight):
             return ["background-color: #ddd6fe"] * len(row)
         return [""] * len(row)
 
     # Define function for unique species not found in negative control
     def unique_species(row):
-        if row["species"] not in neg_control_ordered["species"].values:
+        if absent_in_negative_control(row, neg_control_ordered):
             return ["background-color: #dcfce7"] * len(row)
         return [""] * len(row)
 
     def low_abundance(row):
-        if row["abundance"] < LOW_ABUNDANCE_CUTOFF:
+        if is_low_abundance(row, LOW_ABUNDANCE_CUTOFF):
             return ["color: #9ca3af"] * len(row)
         return [""] * len(row)
 
     # Define function for species normalized against spike
     def normalised_abundance(row):
-        # No spike configured -> do nothing
-        if not normalising_spike_species:
-            return [""] * len(row)
-
-        # Get abundance of spike in sample
-        sample_spike= abundance_ordered.loc[
-            abundance_ordered["species"] == normalising_spike_species, "abundance"
-        ]
-
-        # Get abundance of spike in neg control
-        control_spike = neg_control_ordered.loc[
-            neg_control_ordered["species"] == normalising_spike_species, "abundance"
-        ]
-
-        # Get abundance of species in neg control
-        control_match = neg_control_ordered.loc[
-            neg_control_ordered["species"] == row["species"], "abundance"
-        ]
-
-        # If any of these are empty, we can't do the calculation, so we return no highlight
-        if sample_spike.empty or control_spike.empty or control_match.empty:
-            return [""] * len(row)
-
-        # Normalise (species / spike) in sample and control, then compare
-        sample_ratio = row["abundance"] / sample_spike.iloc[0]
-        control_ratio = control_match.iloc[0] / control_spike.iloc[0]
-
-        if control_ratio > 0 and sample_ratio > 25 * control_ratio:
+        if is_enriched(row, abundance_ordered, neg_control_ordered, normalising_spike_species):
             return ["background-color: #dcfce7"] * len(row)
-
         return [""] * len(row)
 
     # Apply functions for spike species and unique species
@@ -227,15 +160,10 @@ def main():
     # Save date
     today = date.today().strftime("%Y-%m-%d")
 
-    # Load software version
-    with open(f"{args.input_dir}/pipeline_info/software_versions.yml") as v:
-        software_versions = yaml.safe_load(v)
-
     # Load MultiQC JSON
-    with open(f"{args.input_dir}/multiqc/multiqc_data/multiqc_data.json") as f:
-        multiqc_data = json.load(f)
+    multiqc_data = load_multiqc_data(f"{args.input_dir}/multiqc/multiqc_data/multiqc_data.json")
 
-    trana_version = software_versions["Workflow"]["genomic-medicine-sweden/TRANA"]
+    pipeline_version = trana_version(f"{args.input_dir}/pipeline_info/software_versions.yml")
 
     html = template.render(
         css = css_content,
@@ -244,7 +172,7 @@ def main():
         legend = legend_html,
         legend_neg = legend_neg_html,
         today = today,
-        pipeline_version = trana_version,
+        pipeline_version = pipeline_version,
         multiqc_data  = multiqc_data,
         input_dir = Path(args.input_dir).name,
         sample_name = args.sample_name,
