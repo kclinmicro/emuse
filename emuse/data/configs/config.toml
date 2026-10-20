@@ -4,3 +4,5 @@ spike_species = [
     "Allobacillus halotolerans"
 ]
 normalising_spike_species = "Imtechella halotolerans"
+enrichment_fold_cutoff = 25
+low_abundance_cutoff = 0.005
