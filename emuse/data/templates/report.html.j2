@@ -23,7 +23,13 @@
     <!-- Centered page title -->
     <div class="flex flex-col items-center justify-center mt-4 mb-8 w-full">
       <div class="bg-blue-200 text-white rounded-xl px-10 py-8 w-full text-center">
-        <h1 class="text-6xl font-bold text-gray-800">16S TRANA Report</h1>
+        <h1 class="text-6xl font-bold text-gray-800">
+          {% if analysis_type == "its" %}
+            ITS TRANA Report
+          {% else %}
+            16S TRANA Report
+          {% endif %}
+        </h1>
       </div>
     </div>
 
@@ -140,7 +146,7 @@
     <p class="text-sm text-gray-600 mb-2">
       Species with low abundance (&lt;0.5%) are shown in light grey.
     </p>
-    {% if "16SNEG" not in sample_name %}
+    {% if neg_control != sample_name %}
       <p class="text-base font-semibold">{{ sample_name }}</p>
       <div class="sticky-table overflow-hidden">
         <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
