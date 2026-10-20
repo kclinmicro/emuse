@@ -144,11 +144,7 @@ def main():
 
     legend_lines = [
         '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>',
-<<<<<<< HEAD
-        '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; 25.<br>'
-=======
         '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
->>>>>>> 61f8b34 (change z to s in normalize)
     ]
     # Optional line for probability score
     if args.prob_score:
@@ -185,7 +181,8 @@ def main():
         input_dir = Path(args.input_dir).name,
         sample_name = args.sample_name,
         neg_control = args.neg_control,
-        analysis_type = args.analysis_type
+        analysis_type = args.analysis_type,
+        low_abundance_cutoff = LOW_ABUNDANCE_CUTOFF
     )
 
     with open(args.output_file, "w") as f:
