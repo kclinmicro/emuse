@@ -1,23 +1,25 @@
+from pathlib import Path
 import statistics
 
 import pandas as pd
 import pysam
 
 from emuse.taxonomy import TaxTranslator
+from emuse.find_files import find_emu_file
 
 
 def get_alignment_metrics(sample_name, input_dir):
-    abundance_path = f"{input_dir}/results/{sample_name}_downsampled.fastq_rel-abundance.tsv"
-    assignment_path = f"{input_dir}/results/{sample_name}_downsampled.fastq_read-assignment-distributions.tsv"
-    alignments_path = f"{input_dir}/results/{sample_name}_downsampled.fastq_emu_alignments.sam"
+    abundance_file = find_emu_file(Path(input_dir, "results"), sample_name, "rel-abundance.tsv")
+    assignment_file = find_emu_file(Path(input_dir, "results"), sample_name, "read-assignment-distributions.tsv")
+    alignment_file = find_emu_file(Path(input_dir, "results"), sample_name, "emu_alignments.sam")
 
-    df_abundance_unsorted = pd.read_csv(abundance_path, sep="\t")
+    df_abundance_unsorted = pd.read_csv(abundance_file, sep="\t")
     df_abundance = df_abundance_unsorted.sort_values("abundance", ascending=False)
 
-    df_reads = load_read_file(assignment_path, df_abundance)
+    df_reads = load_read_file(assignment_file, df_abundance)
     colnames_taxids = df_reads.columns
 
-    align_file = pysam.AlignmentFile(alignments_path)
+    align_file = pysam.AlignmentFile(alignment_file)
 
     alns_all = {}
     for aln in align_file:
