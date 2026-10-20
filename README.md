@@ -107,7 +107,7 @@ emuse \
 | `--output-file`       | `-o`  | Yes      | Name of the output html report to be generated                                                              |
 | `--sample-name`       | `-s`  | Yes      | Name of the sample to generate the report for                                                               |
 | `--neg-control`       | `-n`  | Yes      | Name of the negative control sample                                                                         |
-| `--config`            | `-c`  | No       | Path to configuration file (default: the bundled default `emuse/data/configs/config.toml`)                                                         |
+| `--config`            | `-c`  | No       | Path to configuration file (default: the bundled default `emuse/data/configs/config.toml`)                  |
 | `--prob-score`        | `-p`  | No       | Include the generation and addition of probability scores in the report                                     |
 | `--alignment-metrics` | `-m`  | No       | Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage) |
 | `--version`           | `-v`  | No       | Print the installed emuse version and exit                                                                  |
@@ -121,11 +121,26 @@ abundance` call (without requiring TRANA).
 
 ### Customization
 
-The report can be customized to the users spike species by editing the already
-existing, or creating a new, `config.toml` file and supplying it through
-`--config` (`-c`). When `--config` is omitted, the bundled default config
+The report can be customized by editing the bundled configuration file or
+creating a new `config.toml` file and supplying it through `--config` (`-c`).
+When `--config` is omitted, the bundled default config
 (`emuse/data/configs/config.toml`) is used.
-Define all spike species in the `spike_species` list. The species used for normalisation is specified separately using `normalising_spike_species`, which must correspond to one of the entries in the `spike_species` list.
+
+The following settings control spike species and abundance highlighting in the
+report:
+| Setting                     | Description                                                                                                                                               | 
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `spike_species`             | List of species treated as spike species and highlighted in purple in the report.                                                                         |
+| `normalising_spike_species` | Spike species used to normalise sample abundances when comparing them with negative control.                                                              |
+| `enrichment_fold_cutoff`    | Fold-change threshold for highlighting enriched species in green. A value of 25 means the normalised abundance in the sample must be greater than 25 times the abundance in the negative control to be highlighted green. Default: 25.                                                                                                               |
+| `low_abundance_cutoff`      | Relative-abundance threshold below which species are displayed in a lighter grey text, reducing visual emphasis. Default: 0.005 (0.5% relative abundance) |
+
+Define all spike species in the `spike_species` list. The species used for
+normalisation is specified separately using `normalising_spike_species`, which
+must correspond to one of the entries in the `spike_species` list. If no
+`spike_species` or `normalising_spike_species` are defined in the config, the
+functionality of colouring is removed from the report. If `enrichment_fold_cutoff`
+or `low_abundance_cutoff` is omitted from the config, the default value is used.
 
 ### Output
 
@@ -137,9 +152,9 @@ the report specifies 16S results, but can be changed to specify ITS results usin
 
 #### Summary Statistics
 
-Key sequencing metrics, including number of reads before and after filtering (including downsampling),
-mean/median read length and read quality (Phred score), read length N50,
-standard deviation (STDEV) of read lengths, and total bases.
+Key sequencing metrics, including number of reads before and after filtering
+(including downsampling), mean/median read length and read quality (Phred score),
+read length N50, standard deviation (STDEV) of read lengths, and total bases.
 
 #### Sample Abundance Table
 
@@ -157,19 +172,26 @@ the following columns:
 | Median probability*       | Median probability of the assigned taxon across reads |
 | Mean probability*         | Mean probability of the assigned taxon across reads   |
 | Median aligned identity** | Median aligned percent identity                       |
-| Median aligned coverage** | Median aligned percent coverage                        |
+| Median aligned coverage** | Median aligned percent coverage                       |
 
-*: The two columns for median and mean probability is by default not included in the table. These can be added by supplying the argument --prob_score (-p).
-**: The two columns for median aligned identity and coverage is by default not included in the table. These can be added by supplying the argument --alignment-metrics (-m).
+*: The two columns for median and mean probability is by default not included in
+the table. These can be added by supplying the argument --prob_score (-p).
+**: The two columns for median aligned identity and coverage is by default not
+included in the table. These can be added by supplying the argument
+--alignment-metrics (-m).
 
 **Color coding:**
 
 - **Purple rows** indicate spike species
-- **Green rows** indicate species absent in negative control or with normalized abundances 25x greater than the negative control. Normalized abundance is calculated through comparing the abundance of species to the abundance of spike species.
+- **Green rows** indicate species absent in negative control or species whose
+normalised abundance in the sample exceeds the configured enrichment fold cutoff
+relative to the negative control. Normalised abundance is calculated through
+comparing the abundance of species to the abundance of spike species.
 
 #### Negative Control Table
 
-A table summarizing the negative control sample, with the same first 6 columns as the previous table.
+A table summarizing the negative control sample, with the same first 6 columns as the
+previous table.
 
 **Color coding:**
 
