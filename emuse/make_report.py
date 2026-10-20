@@ -27,6 +27,7 @@ def main():
     argp.add_argument("-c", "--config", type=Path, default=DEFAULT_CONFIG, help="Path to config file. Default is the bundled config.toml")
     argp.add_argument("-p", "--prob-score", action="store_true", help="Include probability score in the report")
     argp.add_argument("-m", "--alignment-metrics", action="store_true", help="Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage)")
+    argp.add_argument("-a", "--analysis-type", type=str.lower, choices=["16s", "its"], default="16s", help="Type of analysis: 16s or its. Default is 16s")
 
     args = argp.parse_args()
 
@@ -176,7 +177,8 @@ def main():
         multiqc_data  = multiqc_data,
         input_dir = Path(args.input_dir).name,
         sample_name = args.sample_name,
-        neg_control = args.neg_control
+        neg_control = args.neg_control,
+        analysis_type = args.analysis_type
     )
 
     with open(args.output_file, "w") as f:
