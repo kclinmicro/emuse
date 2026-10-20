@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#26](https://github.com/kclinmicro/emuse/pull/26) Version is read from `emuse/__init__.py` (by @ryanjameskennedy)
 - [#22](https://github.com/kclinmicro/emuse/pull/22) Moved parsing, highlighting rules and alignment metrics into importable modules, report output is unchanged (by @ryanjameskennedy)
 - [#33](https://github.com/kclinmicro/emuse/pull/33) Support alternative preprocessing filenames instead of only downsampled files (reported by @ryanjameskennedy, fixed by @AnnaNoren)
+- [#32](https://github.com/kclinmicro/emuse/pull/32) Moved settings `enrichment_fold_cutoff` and `low_abundance_cutoff` into bundled `config.toml` for easier customization of report (by @AnnaNoren)
 
 ### Fixed
 - [#25](https://github.com/kclinmicro/emuse/pull/25) Fixed bundled config path handling (reported by @ryanjameskennedy, fixed by @AnnaNoren)
