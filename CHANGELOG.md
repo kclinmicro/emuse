@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#28](https://github.com/kclinmicro/emuse/pull/28) Added `--version` (`-v`) to print the installed Emuse version and exit
   without requiring report arguments, enabling version capture in Nextflow
   workflows (by @rannick).
+- [#34](https://github.com/kclinmicro/emuse/pull/34) Added `--analysis-type` (`-a`) for specifying ITS or 16S in report, and changed the selection of columns in abundance files to be based on colname instead of position, supporting ITS analysis (by @AnnaNoren)
 
 ### Changed
 - [#24](https://github.com/kclinmicro/emuse/pull/24) Changed rows in Summary statistics, adding corrected rows for Number of reads before and after qc and downsampling (by @AnnaNoren)
