@@ -144,7 +144,7 @@
 
     <h2 class="text-2xl font-semibold mt-5 mb-2">Abundance</h2>
     <p class="text-sm text-gray-600 mb-2">
-      Species with low abundance (&lt;0.5%) are shown in light grey.
+      Species with low abundance (&lt;{{ (low_abundance_cutoff * 100) | round(2) }}%) are shown in light grey.
     </p>
     {% if neg_control != sample_name %}
       <p class="text-base font-semibold">{{ sample_name }}</p>
