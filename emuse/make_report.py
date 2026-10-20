@@ -39,9 +39,6 @@ def main():
     env = Environment(loader=FileSystemLoader(str(DATA_DIR / "templates")))
     template = env.get_template("report.html.j2")
 
-    # Set low abundance cutoff value
-    LOW_ABUNDANCE_CUTOFF = 0.005
-
     # Load sample read assignment table
     assignment_file = find_emu_file(Path(args.input_dir, "results"), args.sample_name, "read-assignment-distributions.tsv")
     assignment_summary = read_assignment_summary(assignment_file)
@@ -72,12 +69,14 @@ def main():
         neg_control_alignment_metrics = get_alignment_metrics(args.neg_control, args.input_dir)
         neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
 
-    # Spike species
+    # Spike species and cutoff values
     with open(args.config, "rb") as f:
         config = tomllib.load(f)
 
     highlight = set(config.get("spike_species", []))
     normalising_spike_species = config.get("normalising_spike_species")
+    ENRICHMENT_FOLD_CUTOFF = config.get("enrichment_fold_cutoff", 25)
+    LOW_ABUNDANCE_CUTOFF = config.get("low_abundance_cutoff", 0.005)
 
     # Define function for spike species
     def highlight_species(row):
@@ -96,9 +95,9 @@ def main():
             return ["color: #9ca3af"] * len(row)
         return [""] * len(row)
 
-    # Define function for species normalized against spike
+    # Define function for species normalised against spike
     def normalised_abundance(row):
-        if is_enriched(row, abundance_ordered, neg_control_ordered, normalising_spike_species):
+        if is_enriched(row, abundance_ordered, neg_control_ordered, normalising_spike_species, fold=ENRICHMENT_FOLD_CUTOFF):
             return ["background-color: #dcfce7"] * len(row)
         return [""] * len(row)
 
@@ -145,7 +144,11 @@ def main():
 
     legend_lines = [
         '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>',
+<<<<<<< HEAD
         '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; 25.<br>'
+=======
+        '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
+>>>>>>> 61f8b34 (change z to s in normalize)
     ]
     # Optional line for probability score
     if args.prob_score:

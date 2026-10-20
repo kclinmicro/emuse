@@ -10,7 +10,7 @@ def is_low_abundance(row, cutoff):
     return row["abundance"] < cutoff
 
 
-def is_enriched(row, sample, neg_control, normalising_spike_species, fold=25):
+def is_enriched(row, sample, neg_control, normalising_spike_species, fold):
     # No spike configured -> do nothing
     if not normalising_spike_species:
         return False
