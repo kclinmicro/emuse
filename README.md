@@ -66,7 +66,7 @@ emuse --input-dir <results_directory> \
 ```
 
 ### Example
-Generating a minimal report:
+Generating a minimal report for 16S analysis:
 ```bash
 emuse \
   --input-dir results/sample_01 \
@@ -74,6 +74,17 @@ emuse \
   --sample-name sample_01 \
   --neg-control neg_control \
   --config config.toml
+```
+
+Generating a minimal report for ITS analysis:
+```bash
+emuse \
+  --input-dir results/sample_01 \
+  --output-file output/sample_01_report.html \
+  --sample-name sample_01 \
+  --neg-control neg_control \
+  --config config.toml \
+  --analysis-type its
 ```
 
 Generating a report with probability scores and alignment metrics:
@@ -100,6 +111,7 @@ emuse \
 | `--prob-score`        | `-p`  | No       | Include the generation and addition of probability scores in the report                                     |
 | `--alignment-metrics` | `-m`  | No       | Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage) |
 | `--version`           | `-v`  | No       | Print the installed emuse version and exit                                                                  |
+| `--analysis-type`     | `-a`  | No       | Type of analysis: 16s or its. Default is 16s                                                                  |
 
 ### Roadmap
 
@@ -119,8 +131,9 @@ Define all spike species in the `spike_species` list. The species used for norma
 
 The script generates a **static HTML report** (`report.html`) in the `output/`
 directory summarizing results from the
-[TRANA](https://github.com/genomic-medicine-sweden/TRANA) pipeline. The report
-contains:
+[TRANA](https://github.com/genomic-medicine-sweden/TRANA) pipeline. By default,
+the report specifies 16S results, but can be changed to specify ITS results using
+`--analysis-type its`. The report contains:
 
 #### Summary Statistics
 
