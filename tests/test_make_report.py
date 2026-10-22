@@ -4,6 +4,7 @@ from importlib.metadata import version
 
 from emuse.make_report import main
 from emuse.alignment import calculate_align_stats, get_align_stats
+from emuse.find_files import find_emu_file
 import pysam
 from pytest import fail, mark, raises
 import tempfile
@@ -23,6 +24,25 @@ def test_cli_version(flag, monkeypatch, capsys):
     output = capsys.readouterr()
     assert output.out == f"emuse {version('emuse')}\n"
     assert output.err == ""
+
+
+def test_find_emu_file(tmp_path):
+    sample_name = "sample1"
+    suffix = "rel-abundance.tsv"
+    expected = tmp_path / f"{sample_name}_downsampled.fastq_{suffix}"
+    expected.touch()
+
+    assert find_emu_file(tmp_path, sample_name, suffix) == expected
+
+
+def test_find_emu_file_multiple_matches(tmp_path):
+    sample_name = "sample1"
+    suffix = "rel-abundance.tsv"
+    (tmp_path / f"{sample_name}_downsampled.fastq_{suffix}").touch()
+    (tmp_path / f"{sample_name}_filtered.fastq_{suffix}").touch()
+
+    with raises(ValueError, match="Expected exactly one"):
+        find_emu_file(tmp_path, sample_name, suffix)
 
 
 def test_get_align_stats():
