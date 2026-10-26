@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [dev]
+
+### Added
+
+- Added `compare_to_negative_controls` for comparing a sample against several negative controls, and `summary_stats` for reading the summary statistics from MultiQC, so that Eyrie can reuse them (by @ryanjameskennedy)
+
 ## [1.2.0]
 
 ### Added
