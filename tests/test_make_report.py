@@ -5,6 +5,7 @@ from importlib.metadata import version
 from emuse.make_report import main
 from emuse.alignment import calculate_align_stats, get_align_stats
 from emuse.find_files import find_emu_file
+from emuse.negative_control import compare_to_negative_controls
 import pysam
 from pytest import fail, mark, raises
 import tempfile
@@ -225,3 +226,31 @@ def create_alignment_file(read_seq, db_seq):
         )
 
         return sam_align_path
+
+
+def test_compare_to_negative_controls():
+    sample = [
+        {"species": "Enriched everywhere", "abundance": 0.5},
+        {"species": "Enriched in one control", "abundance": 0.3},
+        {"species": "Spike", "abundance": 0.1},
+        {"species": "Not in controls", "abundance": 0.001},
+    ]
+    controls = [
+        [
+            {"species": "Enriched everywhere", "abundance": 0.001},
+            {"species": "Enriched in one control", "abundance": 0.001},
+            {"species": "Spike", "abundance": 0.5},
+        ],
+        [
+            {"species": "Enriched everywhere", "abundance": 0.002},
+            {"species": "Enriched in one control", "abundance": 0.4},
+            {"species": "Spike", "abundance": 0.5},
+        ],
+    ]
+
+    flags = compare_to_negative_controls(sample, controls, ["Spike"], "Spike")
+
+    assert [flag["enriched"] for flag in flags] == [True, False, False, False]
+    assert [flag["absent_in_controls"] for flag in flags] == [False, False, False, True]
+    assert [flag["spike"] for flag in flags] == [False, False, True, False]
+    assert [flag["low_abundance"] for flag in flags] == [False, False, False, True]
