@@ -52,20 +52,20 @@
           <tbody>
               <tr class="bg-white">
                   <td class="font-semibold">Number of reads before filtering</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_unprocessed"]["Number of reads_fastq"]| round(0) | int }}</td>
+                  <td>{{ stats.reads_before_filtering| round(0) | int }}</td>
               </tr>
               <tr class="bg-slate-50">
                   <td class="font-semibold">Number of reads after filtering*</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Number of reads_fastq"]| round(0) | int }}</td>
+                  <td>{{ stats.reads_after_filtering| round(0) | int }}</td>
               </tr>
               <tr class="bg-white">
                   <td class="font-semibold">Mean Read Length</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Mean read length_fastq"] }} bp</td>
+                  <td>{{ stats.mean_read_length }} bp</td>
               </tr>
               <tr class="bg-slate-50">
                   <td class="font-semibold">Mean Read Quality</td>
                   <td class="
-                    {% set qmean = multiqc_data['report_general_stats_data'][0][sample_name ~ "_nanoplot_processed"]['Mean read quality_fastq'] %}
+                    {% set qmean = stats.mean_read_quality %}
                     {% if qmean < 15 %}
                       bg-red-200 text-red-800
                     {% elif qmean < 20 %}
@@ -78,12 +78,12 @@
               </tr>
               <tr class="bg-white">
                   <td class="font-semibold">Median Read Length</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Median read length_fastq"] }} bp</td>
+                  <td>{{ stats.median_read_length }} bp</td>
               </tr>
               <tr class="bg-slate-50">
                 <td class="font-semibold">Median Read Quality</td>
                 <td class="
-                  {% set qmedian = multiqc_data['report_general_stats_data'][0][sample_name ~ "_nanoplot_processed"]['Median read quality_fastq'] %}
+                  {% set qmedian = stats.median_read_quality %}
                   {% if qmedian < 15 %}
                     bg-red-200 text-red-800
                   {% elif qmedian < 20 %}
@@ -96,15 +96,15 @@
               </tr>
               <tr class="bg-white">
                 <td class="font-semibold">Read Length N50</td>
-                <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Read length N50_fastq"] }} bp</td>
+                <td>{{ stats.read_length_n50 }} bp</td>
               </tr>
               <tr class="bg-slate-50">
                 <td class="font-semibold">STDEV Read Length</td>
-                <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["STDEV read length_fastq"] }} bp</td>
+                <td>{{ stats.stdev_read_length }} bp</td>
               </tr>
               <tr class="bg-white">
                 <td class="font-semibold">Total Bases</td>
-                <td>{{ (multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Total bases_fastq"] / 1_000_000)|round(1) }} Mbp</td>
+                <td>{{ (stats.total_bases / 1_000_000)|round(1) }} Mbp</td>
               </tr>
           </tbody>
         </table>
