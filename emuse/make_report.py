@@ -9,7 +9,7 @@ import tomllib
 
 from emuse.abundance import read_rel_abundance
 from emuse.alignment import get_alignment_metrics
-from emuse.negative_control import absent_in_negative_control, is_enriched, is_low_abundance, is_spike
+from emuse.negative_control import compare_to_negative_controls, is_low_abundance, is_spike
 from emuse.qc import summary_stats, trana_version
 from emuse.read_assignment import read_assignment_summary
 from emuse.find_files import find_emu_file
@@ -78,15 +78,23 @@ def main():
     ENRICHMENT_FOLD_CUTOFF = config.get("enrichment_fold_cutoff", 25)
     LOW_ABUNDANCE_CUTOFF = config.get("low_abundance_cutoff", 0.005)
 
+    flags = compare_to_negative_controls(
+        abundance_assignment,
+        {args.neg_control: neg_control_ordered},
+        highlight,
+        normalising_spike_species,
+        fold=ENRICHMENT_FOLD_CUTOFF,
+        low_abundance_cutoff=LOW_ABUNDANCE_CUTOFF,
+    )
+
     # Define function for spike species
     def highlight_species(row):
         if is_spike(row, highlight):
             return ["background-color: #ddd6fe"] * len(row)
         return [""] * len(row)
 
-    # Define function for unique species not found in negative control
-    def unique_species(row):
-        if absent_in_negative_control(row, neg_control_ordered):
+    def not_in_control(row):
+        if flags.loc[row.name, "absent_in_controls"] or flags.loc[row.name, "enriched"]:
             return ["background-color: #dcfce7"] * len(row)
         return [""] * len(row)
 
@@ -95,16 +103,9 @@ def main():
             return ["color: #9ca3af"] * len(row)
         return [""] * len(row)
 
-    # Define function for species normalised against spike
-    def normalised_abundance(row):
-        if is_enriched(row, abundance_ordered, neg_control_ordered, normalising_spike_species, fold=ENRICHMENT_FOLD_CUTOFF):
-            return ["background-color: #dcfce7"] * len(row)
-        return [""] * len(row)
-
     # Apply functions for spike species and unique species
     styled_abundance = (abundance_assignment.style
-        .apply(normalised_abundance, axis=1)
-        .apply(unique_species, axis=1)
+        .apply(not_in_control, axis=1)
         .apply(highlight_species, axis=1)
         .apply(low_abundance, axis=1)
         .format({
