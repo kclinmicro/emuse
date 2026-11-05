@@ -44,21 +44,26 @@ def is_enriched(row, sample, neg_control, normalising_spike_species, fold):
     return control_ratio > 0 and sample_ratio > fold * control_ratio
 
 
-def compare_to_negative_controls(sample_rows, controls, spike_species=(), normalising_spike_species=None,
+def compare_to_negative_controls(sample, controls, spike_species=(), normalising_spike_species=None,
                                  fold=25, low_abundance_cutoff=0.005):
-    columns = ["species", "abundance"]
-    sample = pd.DataFrame(sample_rows, columns=columns)
-    control_tables = [pd.DataFrame(rows, columns=columns) for rows in controls]
+    """Flag each species in a sample against one or more negative controls.
 
+    sample: abundance table with "species" and "abundance" columns, as returned by read_rel_abundance.
+    controls: dict of control name to abundance table, e.g. one control per reagent.
+
+    Returns a table with the same index as sample and the boolean columns:
+    spike, absent_in_controls (absent from every control), enriched (enriched against
+    every control the species is found in) and low_abundance.
+    """
     flags = []
     for _, row in sample.iterrows():
-        present_in = [control for control in control_tables if not absent_in_negative_control(row, control)]
+        present_in = [control for control in controls.values() if not absent_in_negative_control(row, control)]
         flags.append({
             "spike": is_spike(row, spike_species),
-            "absent_in_controls": bool(control_tables) and not present_in,
+            "absent_in_controls": bool(controls) and not present_in,
             "enriched": bool(present_in) and all(
                 is_enriched(row, sample, control, normalising_spike_species, fold) for control in present_in
             ),
             "low_abundance": bool(is_low_abundance(row, low_abundance_cutoff)),
         })
-    return flags
+    return pd.DataFrame(flags, index=sample.index, columns=["spike", "absent_in_controls", "enriched", "low_abundance"])

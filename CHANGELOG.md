@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `compare_to_negative_controls` for comparing a sample against several negative controls, and `summary_stats` for reading the summary statistics from MultiQC, so that Eyrie can reuse them (by @ryanjameskennedy)
+- [#37](https://github.com/kclinmicro/emuse/pull/37) Added `compare_to_negative_controls` for comparing a sample against one or more negative controls, and `summary_stats` for reading the summary statistics from MultiQC. The report uses both, and Eyrie can reuse them (by @ryanjameskennedy)
 
 ## [1.2.0]
 
