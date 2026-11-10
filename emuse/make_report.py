@@ -80,7 +80,7 @@ def main():
 
     flags = compare_to_negative_controls(
         abundance_assignment,
-        {args.neg_control: neg_control_ordered},
+        [neg_control_ordered],
         highlight,
         normalising_spike_species,
         fold=ENRICHMENT_FOLD_CUTOFF,
