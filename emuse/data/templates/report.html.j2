@@ -146,7 +146,7 @@
     <p class="text-sm text-gray-600 mb-2">
       Species with low abundance (&lt;{{ (low_abundance_cutoff * 100) | round(2) }}%) are shown in light grey.
     </p>
-    {% if neg_control != sample_name %}
+    {% if sample_name not in neg_controls %}
       <p class="text-base font-semibold">{{ sample_name }}</p>
       <div class="sticky-table overflow-hidden">
         <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
@@ -155,11 +155,13 @@
         {{ legend }}
       </div>
     {% endif %}
-    <p class="text-base font-semibold mt-5">Negative control</p>
-    <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
-      {{ neg_control_table | safe }}
-    </div>
-    {{ legend_neg }}
+    {% for neg_control, neg_control_table in neg_control_tables.items() %}
+      <p class="text-base font-semibold mt-5">Negative control: {{ neg_control }}</p>
+      <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
+        {{ neg_control_table | safe }}
+      </div>
+      {{ legend_neg }}
+    {% endfor %}
 
   </div>
 </body>
