@@ -24,7 +24,7 @@ def main():
     argp.add_argument("-i", "--input-dir", type=str, required=True, help="Path to the input directory containing results")
     argp.add_argument("-o", "--output-file", type=str, required=True, help="Path to the output report file")
     argp.add_argument("-s", "--sample-name", type=str, required=True, help="Name of the sample")
-    argp.add_argument("-n", "--neg-control", type=str, required=True, help="Name of the negative control")
+    argp.add_argument("-n", "--neg-control", type=str, nargs="+", required=True, dest="neg_controls", help="Name of one or more negative controls")
     argp.add_argument("-c", "--config", type=Path, default=DEFAULT_CONFIG, help="Path to config file. Default is the bundled config.toml")
     argp.add_argument("-p", "--prob-score", action="store_true", help="Include probability score in the report")
     argp.add_argument("-m", "--alignment-metrics", action="store_true", help="Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage)")
@@ -43,11 +43,17 @@ def main():
     assignment_file = find_emu_file(Path(args.input_dir, "results"), args.sample_name, "read-assignment-distributions.tsv")
     assignment_summary = read_assignment_summary(assignment_file)
 
-    # Load neg control abundance table
-    neg_control_file = find_emu_file(Path(args.input_dir, "results"), args.neg_control, "rel-abundance.tsv")
-    neg_control_ordered = read_rel_abundance(neg_control_file)
-    # Create fake index column for styling purposes (need it to start from 1 instead of 0)
-    neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
+    # Load neg control abundance tables
+    neg_controls = {}
+    for neg_control in args.neg_controls:
+        neg_control_file = find_emu_file(Path(args.input_dir, "results"), neg_control, "rel-abundance.tsv")
+        neg_control_ordered = read_rel_abundance(neg_control_file)
+        # Create fake index column for styling purposes (need it to start from 1 instead of 0)
+        neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
+        if args.alignment_metrics:
+            neg_control_alignment_metrics = get_alignment_metrics(neg_control, args.input_dir)
+            neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
+        neg_controls[neg_control] = neg_control_ordered
 
     # Load sample abundance table
     abundance_file = find_emu_file(Path(args.input_dir, "results"), args.sample_name, "rel-abundance.tsv")
@@ -66,8 +72,6 @@ def main():
     if args.alignment_metrics:
         alignment_metrics = get_alignment_metrics(args.sample_name, args.input_dir)
         abundance_assignment = abundance_assignment.merge(alignment_metrics, on="tax id", how="left")
-        neg_control_alignment_metrics = get_alignment_metrics(args.neg_control, args.input_dir)
-        neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
 
     # Spike species and cutoff values
     with open(args.config, "rb") as f:
@@ -80,7 +84,7 @@ def main():
 
     flags = compare_to_negative_controls(
         abundance_assignment,
-        [neg_control_ordered],
+        list(neg_controls.values()),
         highlight,
         normalising_spike_species,
         fold=ENRICHMENT_FOLD_CUTOFF,
@@ -125,27 +129,29 @@ def main():
     html_table = styled_abundance.to_html(index=False, border=0, escape=False)
 
     # Apply function for spike species
-    styled_neg_control = (neg_control_ordered.style
-        .apply(highlight_species, axis=1)
-        .apply(low_abundance, axis=1)
-        .format({
-            "estimated read counts": "{:.0f}",
-            "abundance": "{:.2%}",
-            "median aligned identity": "{:.2%}",
-            "median aligned coverage": "{:.2%}",
+    neg_control_tables = {}
+    for neg_control, neg_control_ordered in neg_controls.items():
+        styled_neg_control = (neg_control_ordered.style
+            .apply(highlight_species, axis=1)
+            .apply(low_abundance, axis=1)
+            .format({
+                "estimated read counts": "{:.0f}",
+                "abundance": "{:.2%}",
+                "median aligned identity": "{:.2%}",
+                "median aligned coverage": "{:.2%}",
+                })
+            .set_properties(subset=["row"], **{
+                "background-color": "#f2f2f2",
+                "font-weight": "bold"
             })
-        .set_properties(subset=["row"], **{
-            "background-color": "#f2f2f2",
-            "font-weight": "bold"
-        })
-        .hide(axis="index")
-    )
-    # Convert to html table
-    neg_control_html_table = styled_neg_control.to_html(index=False, border=0, escape=False)
+            .hide(axis="index")
+        )
+        # Convert to html table
+        neg_control_tables[neg_control] = styled_neg_control.to_html(index=False, border=0, escape=False)
 
     legend_lines = [
         '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>',
-        '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
+        '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative controls or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
     ]
     # Optional line for probability score
     if args.prob_score:
@@ -172,7 +178,7 @@ def main():
     html = template.render(
         css = css_content,
         table = html_table,
-        neg_control_table = neg_control_html_table,
+        neg_control_tables = neg_control_tables,
         legend = legend_html,
         legend_neg = legend_neg_html,
         today = today,
@@ -180,7 +186,7 @@ def main():
         stats = stats,
         input_dir = Path(args.input_dir).name,
         sample_name = args.sample_name,
-        neg_control = args.neg_control,
+        neg_controls = args.neg_controls,
         analysis_type = args.analysis_type,
         low_abundance_cutoff = LOW_ABUNDANCE_CUTOFF
     )
