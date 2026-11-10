@@ -234,16 +234,16 @@ def test_compare_to_negative_controls():
         "species": ["Enriched everywhere", "Enriched in one control", "Spike", "Not in controls"],
         "abundance": [0.5, 0.3, 0.1, 0.001],
     })
-    controls = {
-        "mutanolysin": pd.DataFrame({
+    controls = [
+        pd.DataFrame({
             "species": ["Enriched everywhere", "Enriched in one control", "Spike"],
             "abundance": [0.001, 0.001, 0.5],
         }),
-        "proteinase_k": pd.DataFrame({
+        pd.DataFrame({
             "species": ["Enriched everywhere", "Enriched in one control", "Spike"],
             "abundance": [0.002, 0.4, 0.5],
         }),
-    }
+    ]
 
     flags = compare_to_negative_controls(sample, controls, ["Spike"], "Spike")
 
