@@ -230,24 +230,17 @@ def create_alignment_file(read_seq, db_seq):
 
 
 def test_compare_to_negative_controls():
+    species = ["Staphylococcus aureus", "Escherichia coli", "Imtechella halotolerans"]
     sample = pd.DataFrame({
-        "species": ["Enriched everywhere", "Enriched in one control", "Spike", "Not in controls"],
-        "abundance": [0.5, 0.3, 0.1, 0.001],
+        "species": species + ["Cutibacterium acnes"],
+        "abundance": [0.5, 0.3, 0.1, 0.1],
     })
     controls = [
-        pd.DataFrame({
-            "species": ["Enriched everywhere", "Enriched in one control", "Spike"],
-            "abundance": [0.001, 0.001, 0.5],
-        }),
-        pd.DataFrame({
-            "species": ["Enriched everywhere", "Enriched in one control", "Spike"],
-            "abundance": [0.002, 0.4, 0.5],
-        }),
+        pd.DataFrame({"species": species, "abundance": [0.001, 0.001, 0.5]}),
+        pd.DataFrame({"species": species, "abundance": [0.002, 0.4, 0.5]}),
     ]
 
-    flags = compare_to_negative_controls(sample, controls, ["Spike"], "Spike")
+    flags = compare_to_negative_controls(sample, controls, normalising_spike_species="Imtechella halotolerans")
 
     assert flags["enriched"].tolist() == [True, False, False, False]
     assert flags["absent_in_controls"].tolist() == [False, False, False, True]
-    assert flags["spike"].tolist() == [False, False, True, False]
-    assert flags["low_abundance"].tolist() == [False, False, False, True]
