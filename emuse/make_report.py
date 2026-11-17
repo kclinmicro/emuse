@@ -151,7 +151,11 @@ def main():
 
     legend_lines = [
         '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>',
-        '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative controls or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
+        (
+            '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in any negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + ' against all negative controls in which the species is present.<br>'
+            if len(args.neg_controls) > 1 else
+            '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
+        )
     ]
     # Optional line for probability score
     if args.prob_score:
