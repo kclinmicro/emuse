@@ -155,11 +155,13 @@
         {{ legend }}
       </div>
     {% endif %}
-    <p class="text-base font-semibold mt-5">Negative control</p>
-    <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
-      {{ neg_control_table | safe }}
-    </div>
-    {{ legend_neg }}
+    {% if neg_control %}
+      <p class="text-base font-semibold mt-5">Negative control</p>
+      <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
+        {{ neg_control_table | safe }}
+      </div>
+      {{ legend_neg }}
+    {% endif %}
 
   </div>
 </body>

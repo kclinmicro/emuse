@@ -24,7 +24,7 @@ def main():
     argp.add_argument("-i", "--input-dir", type=str, required=True, help="Path to the input directory containing results")
     argp.add_argument("-o", "--output-file", type=str, required=True, help="Path to the output report file")
     argp.add_argument("-s", "--sample-name", type=str, required=True, help="Name of the sample")
-    argp.add_argument("-n", "--neg-control", type=str, required=True, help="Name of the negative control")
+    argp.add_argument("-n", "--neg-control", type=str, help="Name of the negative control")
     argp.add_argument("-c", "--config", type=Path, default=DEFAULT_CONFIG, help="Path to config file. Default is the bundled config.toml")
     argp.add_argument("-p", "--prob-score", action="store_true", help="Include probability score in the report")
     argp.add_argument("-m", "--alignment-metrics", action="store_true", help="Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage)")
@@ -44,10 +44,11 @@ def main():
     assignment_summary = read_assignment_summary(assignment_file)
 
     # Load neg control abundance table
-    neg_control_file = find_emu_file(Path(args.input_dir, "results"), args.neg_control, "rel-abundance.tsv")
-    neg_control_ordered = read_rel_abundance(neg_control_file)
-    # Create fake index column for styling purposes (need it to start from 1 instead of 0)
-    neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
+    if args.neg_control:
+        neg_control_file = find_emu_file(Path(args.input_dir, "results"), args.neg_control, "rel-abundance.tsv")
+        neg_control_ordered = read_rel_abundance(neg_control_file)
+        # Create fake index column for styling purposes (need it to start from 1 instead of 0)
+        neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
 
     # Load sample abundance table
     abundance_file = find_emu_file(Path(args.input_dir, "results"), args.sample_name, "rel-abundance.tsv")
@@ -66,8 +67,9 @@ def main():
     if args.alignment_metrics:
         alignment_metrics = get_alignment_metrics(args.sample_name, args.input_dir)
         abundance_assignment = abundance_assignment.merge(alignment_metrics, on="tax id", how="left")
-        neg_control_alignment_metrics = get_alignment_metrics(args.neg_control, args.input_dir)
-        neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
+        if args.neg_control:
+            neg_control_alignment_metrics = get_alignment_metrics(args.neg_control, args.input_dir)
+            neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
 
     # Spike species and cutoff values
     with open(args.config, "rb") as f:
@@ -86,7 +88,7 @@ def main():
 
     # Define function for unique species not found in negative control
     def unique_species(row):
-        if absent_in_negative_control(row, neg_control_ordered):
+        if args.neg_control and absent_in_negative_control(row, neg_control_ordered):
             return ["background-color: #dcfce7"] * len(row)
         return [""] * len(row)
 
@@ -97,7 +99,7 @@ def main():
 
     # Define function for species normalised against spike
     def normalised_abundance(row):
-        if is_enriched(row, abundance_ordered, neg_control_ordered, normalising_spike_species, fold=ENRICHMENT_FOLD_CUTOFF):
+        if args.neg_control and is_enriched(row, abundance_ordered, neg_control_ordered, normalising_spike_species, fold=ENRICHMENT_FOLD_CUTOFF):
             return ["background-color: #dcfce7"] * len(row)
         return [""] * len(row)
 
@@ -124,23 +126,26 @@ def main():
     html_table = styled_abundance.to_html(index=False, border=0, escape=False)
 
     # Apply function for spike species
-    styled_neg_control = (neg_control_ordered.style
-        .apply(highlight_species, axis=1)
-        .apply(low_abundance, axis=1)
-        .format({
-            "estimated read counts": "{:.0f}",
-            "abundance": "{:.2%}",
-            "median aligned identity": "{:.2%}",
-            "median aligned coverage": "{:.2%}",
+    if args.neg_control:
+        styled_neg_control = (neg_control_ordered.style
+            .apply(highlight_species, axis=1)
+            .apply(low_abundance, axis=1)
+            .format({
+                "estimated read counts": "{:.0f}",
+                "abundance": "{:.2%}",
+                "median aligned identity": "{:.2%}",
+                "median aligned coverage": "{:.2%}",
+                })
+            .set_properties(subset=["row"], **{
+                "background-color": "#f2f2f2",
+                "font-weight": "bold"
             })
-        .set_properties(subset=["row"], **{
-            "background-color": "#f2f2f2",
-            "font-weight": "bold"
-        })
-        .hide(axis="index")
-    )
-    # Convert to html table
-    neg_control_html_table = styled_neg_control.to_html(index=False, border=0, escape=False)
+            .hide(axis="index")
+        )
+        # Convert to html table
+        neg_control_html_table = styled_neg_control.to_html(index=False, border=0, escape=False)
+    else:
+        neg_control_html_table = None
 
     legend_lines = [
         '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>',
@@ -154,12 +159,15 @@ def main():
 
     legend_html = '<p class="text-gray-700 italic mt-2">'+ "".join(legend_lines) + '</p>'
 
-    legend_neg_html = """
-    <p class="text-gray-700 italic mt-2">
-        <span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span>
-        Purple rows indicate spike species
-    </p>
-    """
+    if args.neg_control:
+        legend_neg_html = """
+        <p class="text-gray-700 italic mt-2">
+            <span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span>
+            Purple rows indicate spike species
+        </p>
+        """
+    else:
+        legend_neg_html = ""
 
     # Save date
     today = date.today().strftime("%Y-%m-%d")
