@@ -50,12 +50,11 @@ def compare_to_negative_controls(sample, controls, spike_species=(), normalising
     flags = []
     for _, row in sample.iterrows():
         present_in = [control for control in controls if not absent_in_negative_control(row, control)]
+        enriched = all(is_enriched(row, sample, control, normalising_spike_species, fold) for control in present_in)
         flags.append({
             "spike": is_spike(row, spike_species),
-            "absent_in_controls": bool(controls) and not present_in,
-            "enriched": bool(present_in) and all(
-                is_enriched(row, sample, control, normalising_spike_species, fold) for control in present_in
-            ),
-            "low_abundance": bool(is_low_abundance(row, low_abundance_cutoff)),
+            "absent_in_controls": not present_in,
+            "enriched": bool(present_in) and enriched,
+            "low_abundance": is_low_abundance(row, low_abundance_cutoff),
         })
-    return pd.DataFrame(flags, index=sample.index, columns=["spike", "absent_in_controls", "enriched", "low_abundance"])
+    return pd.DataFrame(flags, index=sample.index)
