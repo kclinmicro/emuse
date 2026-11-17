@@ -186,11 +186,11 @@ included in the table. These can be added by supplying the argument
 - **Green rows** indicate species absent in negative control or species whose
 normalised abundance in the sample exceeds the configured enrichment fold cutoff
 relative to the negative control. Normalised abundance is calculated through
-comparing the abundance of species to the abundance of spike species.
+comparing the abundance of species to the abundance of spike species. When multiple negative controls are used, this condition must be met for each negative control.
 
-#### Negative Control Table
+#### Negative Control Table(s)
 
-A table summarizing the negative control sample, with the same first 6 columns as the
+One or more tables summarizing the negative control sample(s), with the same first 6 columns as the
 previous table.
 
 **Color coding:**
