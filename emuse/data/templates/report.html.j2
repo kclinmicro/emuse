@@ -154,14 +154,26 @@
         </div>
         {{ legend }}
       </div>
-    {% endif %}
-    {% for neg_control, neg_control_table in neg_control_tables.items() %}
-      <p class="text-base font-semibold mt-5">Negative control: {{ neg_control }}</p>
-      <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
-        {{ neg_control_table | safe }}
+
+      {% for neg_control, neg_control_table in neg_control_tables.items() %}
+        <p class="text-base font-semibold mt-5">Negative control: {{ neg_control }}</p>
+        <div class="sticky-table overflow-hidden">
+          <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
+            {{ neg_control_table | safe }}
+          </div>
+          {{ legend_neg }}
+        </div>
+      {% endfor %}
+
+    {% else %}
+      <p class="text-base font-semibold">{{ sample_name }}</p>
+      <div class="sticky-table overflow-hidden">
+        <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
+          {{ neg_control_tables[sample_name] | safe }}
+        </div>
+        {{ legend_neg }}
       </div>
-      {{ legend_neg }}
-    {% endfor %}
+    {% endif %}
 
   </div>
 </body>
