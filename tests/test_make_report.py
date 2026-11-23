@@ -10,6 +10,11 @@ import pandas as pd
 import pysam
 from pytest import fail, mark, raises
 import tempfile
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader
+
+TEMPLATE_DIR = Path(__file__).parents[1] / "emuse" / "data" / "templates"
+template = Environment(loader=FileSystemLoader(TEMPLATE_DIR)).get_template("report.html.j2")
 
 # An example sequence to be used in multiple tests
 seq = "CGGCTTAGAGGCGGCTGCGCGTAGTGCTGCTGATTATATTTCGGCGCTATATCGCTGATGATCGTCGATACGTACTGCTAGCTGCATCTGATCGATCGTC"
@@ -244,3 +249,86 @@ def test_compare_to_negative_controls():
 
     assert flags["enriched"].tolist() == [True, False, False, False]
     assert flags["absent_in_controls"].tolist() == [False, False, False, True]
+
+# Testing template rendering
+
+def render_report(sample_name, neg_controls, neg_control_tables):
+    stats = {
+        "reads_before_filtering": 1000,
+        "reads_after_filtering": 900,
+        "mean_read_length": 1000,
+        "mean_read_quality": 20,
+        "median_read_length": 1000,
+        "median_read_quality": 20,
+        "read_length_n50": 1000,
+        "stdev_read_length": 100,
+        "total_bases": 900000,
+    }
+
+    return template.render(
+        css="",
+        table="<table>sample_table</table>",
+        neg_control_tables=neg_control_tables,
+        legend="sample_legend",
+        legend_neg="neg_legend",
+        today="2026-11-23",
+        pipeline_version="1.0",
+        stats=stats,
+        input_dir="test_run",
+        sample_name=sample_name,
+        neg_controls=neg_controls,
+        analysis_type="16s",
+        low_abundance_cutoff=0.005,
+    )
+
+
+def test_report_one_negative_control():
+    html = render_report(
+        "sample1",
+        ["NEG1"],
+        {"NEG1": "<table>NEG1_table</table>"},
+    )
+
+    assert "sample_table" in html
+    assert "NEG1_table" in html
+    assert "Negative control: NEG1" in html
+
+
+def test_report_two_negative_controls():
+    html = render_report(
+        "sample1",
+        ["NEG1", "NEG2"],
+        {
+            "NEG1": "<table>NEG1_table</table>",
+            "NEG2": "<table>NEG2_table</table>",
+        },
+    )
+
+    assert "sample_table" in html
+    assert "NEG1_table" in html
+    assert "NEG2_table" in html
+    assert "Negative control: NEG1" in html
+    assert "Negative control: NEG2" in html
+
+
+def test_report_negative_control_sample():
+    html = render_report(
+        "NEG1",
+        ["NEG1", "NEG2"],
+        {
+            "NEG1": "<table>NEG1_table</table>",
+            "NEG2": "<table>NEG2_table</table>",
+        },
+    )
+
+    assert "NEG1_table" in html
+    assert "sample_table" not in html
+    assert "NEG2_table" not in html
+
+
+def test_report_without_negative_controls():
+    html = render_report("sample1", [], {})
+
+    assert "sample_table" in html
+    assert "Negative control:" not in html
+    assert "neg_legend" not in html
