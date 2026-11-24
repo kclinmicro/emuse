@@ -53,7 +53,7 @@ def compare_to_negative_controls(sample, controls, spike_species=(), normalising
         enriched = all(is_enriched(row, sample, control, normalising_spike_species, fold) for control in present_in)
         flags.append({
             "spike": is_spike(row, spike_species),
-            "absent_in_controls": not present_in,
+            "absent_in_controls": bool(controls) and not present_in,
             "enriched": bool(present_in) and enriched,
             "low_abundance": is_low_abundance(row, low_abundance_cutoff),
         })
