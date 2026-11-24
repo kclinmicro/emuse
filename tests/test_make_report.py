@@ -250,6 +250,19 @@ def test_compare_to_negative_controls():
     assert flags["enriched"].tolist() == [True, False, False, False]
     assert flags["absent_in_controls"].tolist() == [False, False, False, True]
 
+# This test tests the behavior of compare_to_negative_controls when no negative controls are provided. It checks that the flags for "absent_in_controls" and "enriched" are correctly set to False for all species in the sample.
+
+def test_compare_to_negative_controls_without_controls():
+    sample = pd.DataFrame({
+        "species": ["Species A", "Species B"],
+        "abundance": [0.5, 0.3],
+    })
+
+    flags = compare_to_negative_controls(sample, [])
+
+    assert not flags["absent_in_controls"].any()
+    assert not flags["enriched"].any()
+
 # Testing template rendering
 
 def render_report(sample_name, neg_controls, neg_control_tables):
