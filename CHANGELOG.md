@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#37](https://github.com/kclinmicro/emuse/pull/37) Added `compare_to_negative_controls` for comparing a sample against one or more negative controls, and `summary_stats` for reading the summary statistics from MultiQC. The report uses both, and `--neg-control` (`-n`) now takes one or more negative controls (by @ryanjameskennedy)
 
+### Changed
+
+- [#41](https://github.com/kclinmicro/emuse/pull/41) Changed input argument `--neg-control` (`-n`) from mandatory to optional with default `[]`, allowing report generation without a negative control, and updated documentation for negative control (by @AnnaNoren)
+
+### Fixed
+
+- [#41](https://github.com/kclinmicro/emuse/pull/41) Fixed negative control reports to include only the selected negative control, rather than all negative controls, when multiple negative controls are present (by @AnnaNoren)
+
 ## [1.2.0]
 
 ### Added
