@@ -59,11 +59,19 @@ Run the report generator using the installed command:
 emuse --input-dir <results_directory> \
                  --output-file <output_file> \
                  --sample-name <sample_name> \
-                 --neg-control <negative_control_name> [<negative_control_name> ...] \
+                 [--neg-control <negative_control_name> [<negative_control_name> ...]] \
                  [--config config.toml] \
                  [--prob-score] \
                  [--alignment-metrics]
 ```
+
+> [!WARNING]
+> **Negative control recommended**
+> Emuse can generate a report without a negative control, but this is not
+> recommended. Several functionalities, including negative control comparisons
+> and enrichment-based highlighting will be unavailable.
+> Providing a negative control is strongly recommended to make full use of the
+> report.
 
 ### Example
 Generating a minimal report for 16S analysis:
@@ -101,17 +109,17 @@ emuse \
 
 ### Arguments
 
-| Argument              | Short | Required | Description                                                                                                 |
-| ---------------       | ----- | -------- | -------------------------------------------------------                                                     |
-| `--input-dir`         | `-i`  | Yes      | Path to the directory containing TRANA pipeline results                                                     |
-| `--output-file`       | `-o`  | Yes      | Name of the output html report to be generated                                                              |
-| `--sample-name`       | `-s`  | Yes      | Name of the sample to generate the report for                                                               |
-| `--neg-control`       | `-n`  | Yes      | Name of one or more negative control samples                                                                |
-| `--config`            | `-c`  | No       | Path to configuration file (default: the bundled default `emuse/data/configs/config.toml`)                  |
-| `--prob-score`        | `-p`  | No       | Include the generation and addition of probability scores in the report                                     |
-| `--alignment-metrics` | `-m`  | No       | Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage) |
-| `--version`           | `-v`  | No       | Print the installed emuse version and exit                                                                  |
-| `--analysis-type`     | `-a`  | No       | Type of analysis: 16s or its. Default is 16s                                                                  |
+| Argument              | Short | Required | Description                                                                                                                                     |
+| --------------------- | ----- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--input-dir`         | `-i`  | Yes      | Path to the directory containing TRANA pipeline results                                                                                         |
+| `--output-file`       | `-o`  | Yes      | Name of the output html report to be generated                                                                                                  |
+| `--sample-name`       | `-s`  | Yes      | Name of the sample to generate the report for                                                                                                   |
+| `--neg-control`       | `-n`  | No       | Name of one or more negative control samples. Recommended for negative control comparisons and abundance normalisation. Default is `[]` (empty) |
+| `--config`            | `-c`  | No       | Path to configuration file (default: the bundled default `emuse/data/configs/config.toml`)                                                      |
+| `--prob-score`        | `-p`  | No       | Include the generation and addition of probability scores in the report                                                                         |
+| `--alignment-metrics` | `-m`  | No       | Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage)                                     |
+| `--version`           | `-v`  | No       | Print the installed emuse version and exit                                                                                                      |
+| `--analysis-type`     | `-a`  | No       | Type of analysis: 16s or its. Default is 16s                                                                                                    |
 
 ### Roadmap
 
@@ -132,15 +140,17 @@ report:
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `spike_species`             | List of species treated as spike species and highlighted in purple in the report.                                                                         |
 | `normalising_spike_species` | Spike species used to normalise sample abundances when comparing them with negative control.                                                              |
-| `enrichment_fold_cutoff`    | Fold-change threshold for highlighting enriched species in green. A value of 25 means the normalised abundance in the sample must be greater than 25 times the abundance in the negative control to be highlighted green. Default: 25.                                                                                                               |
+| `enrichment_fold_cutoff`    | Fold-change threshold for highlighting enriched species in green. A value of 25 means the normalised abundance in the sample must be greater than 25 times the normalised abundance in the negative control to be highlighted green. Default: 25. |
 | `low_abundance_cutoff`      | Relative-abundance threshold below which species are displayed in a lighter grey text, reducing visual emphasis. Default: 0.005 (0.5% relative abundance) |
 
 Define all spike species in the `spike_species` list. The species used for
 normalisation is specified separately using `normalising_spike_species`, which
 must correspond to one of the entries in the `spike_species` list. If no
 `spike_species` or `normalising_spike_species` are defined in the config, the
-functionality of colouring is removed from the report. If `enrichment_fold_cutoff`
-or `low_abundance_cutoff` is omitted from the config, the default value is used.
+functionality of colouring is removed from the report. If no negative control is
+supplied, all colouring related to negative control comparisons are removed from
+the report. If `enrichment_fold_cutoff` or `low_abundance_cutoff` is omitted from
+the config, the default value is used.
 
 ### Output
 
@@ -186,16 +196,24 @@ included in the table. These can be added by supplying the argument
 - **Green rows** indicate species absent in negative control or species whose
 normalised abundance in the sample exceeds the configured enrichment fold cutoff
 relative to the negative control. Normalised abundance is calculated through
-comparing the abundance of species to the abundance of spike species. When multiple negative controls are used, this condition must be met for each negative control.
+comparing the abundance of species to the abundance of spike species. When
+multiple negative controls are used, this condition must be met for each negative
+control. This highlighting is only available when a negative control is provided.
 
 #### Negative Control Table(s)
 
-One or more tables summarizing the negative control sample(s), with the same first 6 columns as the
-previous table.
+One or more tables summarizing the negative control sample(s), with the same
+first 6 columns as the previous table.
 
 **Color coding:**
 
 - **Purple rows** indicate spike species
+
+#### Negative Control Report
+
+If the name given with `-s` is also one of the names given with `-n`, a negative
+control report is generated instead. It contains the summary statistics and only
+the negative control's abundance table, with no comparisons against other tables.
 
 ## Citations
 - [EMU](https://github.com/treangenlab/emu)
