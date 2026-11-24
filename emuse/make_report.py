@@ -2,6 +2,7 @@ import argparse
 from datetime import date
 from importlib import resources
 from importlib.metadata import version
+import sys
 from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
 import re
@@ -24,7 +25,7 @@ def main():
     argp.add_argument("-i", "--input-dir", type=str, required=True, help="Path to the input directory containing results")
     argp.add_argument("-o", "--output-file", type=str, required=True, help="Path to the output report file")
     argp.add_argument("-s", "--sample-name", type=str, required=True, help="Name of the sample")
-    argp.add_argument("-n", "--neg-control", type=str, nargs="+", dest="neg_controls", help="Name of one or more negative controls")
+    argp.add_argument("-n", "--neg-control", type=str, nargs="+", default=[], dest="neg_controls", help="Name of one or more negative controls")
     argp.add_argument("-c", "--config", type=Path, default=DEFAULT_CONFIG, help="Path to config file. Default is the bundled config.toml")
     argp.add_argument("-p", "--prob-score", action="store_true", help="Include probability score in the report")
     argp.add_argument("-m", "--alignment-metrics", action="store_true", help="Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage)")
@@ -33,7 +34,7 @@ def main():
     args = argp.parse_args()
 
     if not args.neg_controls:
-        print("WARNING: No negative controls specified. Negative control comparisons will not be performed.")
+        print("WARNING: No negative controls specified. Negative control comparisons will not be performed.", file=sys.stderr)
 
     # Read CSS file content
     with open(DATA_DIR / "static" / "style.css", "r") as f:
@@ -48,16 +49,15 @@ def main():
 
     # Load neg control abundance tables
     neg_controls = {}
-    if args.neg_controls:
-        for neg_control in args.neg_controls:
-            neg_control_file = find_emu_file(Path(args.input_dir, "results"), neg_control, "rel-abundance.tsv")
-            neg_control_ordered = read_rel_abundance(neg_control_file)
-            # Create fake index column for styling purposes (need it to start from 1 instead of 0)
-            neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
-            if args.alignment_metrics:
-                neg_control_alignment_metrics = get_alignment_metrics(neg_control, args.input_dir)
-                neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
-            neg_controls[neg_control] = neg_control_ordered
+    for neg_control in args.neg_controls:
+        neg_control_file = find_emu_file(Path(args.input_dir, "results"), neg_control, "rel-abundance.tsv")
+        neg_control_ordered = read_rel_abundance(neg_control_file)
+        # Create fake index column for styling purposes (need it to start from 1 instead of 0)
+        neg_control_ordered.insert(0, "row", range(1, len(neg_control_ordered) + 1))
+        if args.alignment_metrics:
+            neg_control_alignment_metrics = get_alignment_metrics(neg_control, args.input_dir)
+            neg_control_ordered = neg_control_ordered.merge(neg_control_alignment_metrics, on="tax id", how="left")
+        neg_controls[neg_control] = neg_control_ordered
 
     # Load sample abundance table
     abundance_file = find_emu_file(Path(args.input_dir, "results"), args.sample_name, "rel-abundance.tsv")
@@ -86,15 +86,14 @@ def main():
     ENRICHMENT_FOLD_CUTOFF = config.get("enrichment_fold_cutoff", 25)
     LOW_ABUNDANCE_CUTOFF = config.get("low_abundance_cutoff", 0.005)
 
-    if args.neg_controls:
-        flags = compare_to_negative_controls(
-            abundance_assignment,
-            list(neg_controls.values()),
-            highlight,
-            normalising_spike_species,
-            fold=ENRICHMENT_FOLD_CUTOFF,
-            low_abundance_cutoff=LOW_ABUNDANCE_CUTOFF,
-        )
+    flags = compare_to_negative_controls(
+        abundance_assignment,
+        list(neg_controls.values()),
+        highlight,
+        normalising_spike_species,
+        fold=ENRICHMENT_FOLD_CUTOFF,
+        low_abundance_cutoff=LOW_ABUNDANCE_CUTOFF,
+    )
 
     # Define function for spike species
     def highlight_species(row):
@@ -112,13 +111,9 @@ def main():
             return ["color: #9ca3af"] * len(row)
         return [""] * len(row)
 
-    # Apply function for unique species if negative controls are provided
-    styled_abundance = abundance_assignment.style
-    if args.neg_controls:
-        styled_abundance = styled_abundance.apply(not_in_control, axis=1)
-
-    # Apply functions for spike species and low abundance
-    styled_abundance = (styled_abundance
+    # Apply functions for negative control comparisons, spike species and low abundance
+    styled_abundance = (abundance_assignment.style
+        .apply(not_in_control, axis=1)
         .apply(highlight_species, axis=1)
         .apply(low_abundance, axis=1)
         .format({
@@ -201,7 +196,7 @@ def main():
         stats = stats,
         input_dir = Path(args.input_dir).name,
         sample_name = args.sample_name,
-        neg_controls = args.neg_controls or [],
+        neg_controls = args.neg_controls,
         analysis_type = args.analysis_type,
         low_abundance_cutoff = LOW_ABUNDANCE_CUTOFF
     )
