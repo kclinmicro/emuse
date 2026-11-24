@@ -153,16 +153,34 @@ def main():
         # Convert to html table
         neg_control_tables[neg_control] = styled_neg_control.to_html(index=False, border=0, escape=False)
 
-    legend_lines = [
-        '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>',
-        (
-            '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in any negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + ' against all negative controls in which the species is present.<br>'
-            if args.neg_controls and len(args.neg_controls) > 1 else
-            '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; ' + str(ENRICHMENT_FOLD_CUTOFF) + '.<br>'
-            if args.neg_controls else
-            ''
+    # Create legend lines for the abundance tables
+    legend_lines = []
+    legend_lines_neg = []
+
+    # Optional line for spike species
+    if highlight:
+        legend_lines.append(
+            '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>'
         )
-    ]
+        legend_lines_neg.append(
+            '<span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span> Purple rows indicate spike species<br>'
+        )
+
+    # Optional lines for negative control comparisons
+    if args.neg_controls:
+        if len(args.neg_controls) > 1:
+            legend_lines.append(
+                '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in any negative control or with a normalised abundance ratio &ge; '
+                + str(ENRICHMENT_FOLD_CUTOFF)
+                + ' against all negative controls in which the species is present.<br>'
+            )
+        else:
+            legend_lines.append(
+                '<span class="inline-block w-4 h-4 bg-green-100 mr-2 border"></span> Green rows indicate species not found in negative control or with a normalised abundance ratio &ge; '
+                + str(ENRICHMENT_FOLD_CUTOFF)
+                + '.<br>'
+            )
+
     # Optional line for probability score
     if args.prob_score:
         legend_lines.append(
@@ -170,13 +188,7 @@ def main():
         )
 
     legend_html = '<p class="text-gray-700 italic mt-2">'+ "".join(legend_lines) + '</p>'
-
-    legend_neg_html = """
-    <p class="text-gray-700 italic mt-2">
-        <span class="inline-block w-4 h-4 bg-purple-200 mr-2 border"></span>
-        Purple rows indicate spike species
-    </p>
-    """
+    legend_neg_html = '<p class="text-gray-700 italic mt-2">'+ "".join(legend_lines_neg) + '</p>'
 
     # Save date
     today = date.today().strftime("%Y-%m-%d")
