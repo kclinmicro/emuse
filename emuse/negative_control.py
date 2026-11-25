@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 def is_spike(row, spike_species):
     return row["species"] in spike_species
 
@@ -39,3 +42,19 @@ def is_enriched(row, sample, neg_control, normalising_spike_species, fold):
     control_ratio = control_match.iloc[0] / control_spike.iloc[0]
 
     return control_ratio > 0 and sample_ratio > fold * control_ratio
+
+
+def compare_to_negative_controls(sample, controls, spike_species=(), normalising_spike_species=None,
+                                 fold=25, low_abundance_cutoff=0.005):
+    """Flag each species in sample against a list of negative control abundance tables."""
+    flags = []
+    for _, row in sample.iterrows():
+        present_in = [control for control in controls if not absent_in_negative_control(row, control)]
+        enriched = all(is_enriched(row, sample, control, normalising_spike_species, fold) for control in present_in)
+        flags.append({
+            "spike": is_spike(row, spike_species),
+            "absent_in_controls": not present_in,
+            "enriched": bool(present_in) and enriched,
+            "low_abundance": is_low_abundance(row, low_abundance_cutoff),
+        })
+    return pd.DataFrame(flags, index=sample.index)

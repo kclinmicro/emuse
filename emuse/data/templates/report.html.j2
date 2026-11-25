@@ -25,9 +25,9 @@
       <div class="bg-blue-200 text-white rounded-xl px-10 py-8 w-full text-center">
         <h1 class="text-6xl font-bold text-gray-800">
           {% if analysis_type == "its" %}
-            ITS TRANA Report
+            ITS Emuse Report
           {% else %}
-            16S TRANA Report
+            16S Emuse Report
           {% endif %}
         </h1>
       </div>
@@ -41,10 +41,13 @@
         <div class="pl-8"><strong>Run</strong>: {{ input_dir }}</div>
         <!-- Row 2 -->
         <div><strong>Date</strong>: {{ today }}</div>
+        {% if pipeline_version %}
         <div class="pl-8"><strong>Pipeline version</strong>: TRANA v{{ pipeline_version }}</div>
+        {% endif %}
       </div>
     </div>
 
+    {% if stats %}
     <h2 class="text-2xl font-semibold mb-10 mb-2">Summary Statistics</h2>
     <div class="flex gap-6">
       <div class="w-2/5">
@@ -52,20 +55,20 @@
           <tbody>
               <tr class="bg-white">
                   <td class="font-semibold">Number of reads before filtering</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_unprocessed"]["Number of reads_fastq"]| round(0) | int }}</td>
+                  <td>{{ stats.reads_before_filtering| round(0) | int }}</td>
               </tr>
               <tr class="bg-slate-50">
                   <td class="font-semibold">Number of reads after filtering*</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Number of reads_fastq"]| round(0) | int }}</td>
+                  <td>{{ stats.reads_after_filtering| round(0) | int }}</td>
               </tr>
               <tr class="bg-white">
                   <td class="font-semibold">Mean Read Length</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Mean read length_fastq"] }} bp</td>
+                  <td>{{ stats.mean_read_length }} bp</td>
               </tr>
               <tr class="bg-slate-50">
                   <td class="font-semibold">Mean Read Quality</td>
                   <td class="
-                    {% set qmean = multiqc_data['report_general_stats_data'][0][sample_name ~ "_nanoplot_processed"]['Mean read quality_fastq'] %}
+                    {% set qmean = stats.mean_read_quality %}
                     {% if qmean < 15 %}
                       bg-red-200 text-red-800
                     {% elif qmean < 20 %}
@@ -78,12 +81,12 @@
               </tr>
               <tr class="bg-white">
                   <td class="font-semibold">Median Read Length</td>
-                  <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Median read length_fastq"] }} bp</td>
+                  <td>{{ stats.median_read_length }} bp</td>
               </tr>
               <tr class="bg-slate-50">
                 <td class="font-semibold">Median Read Quality</td>
                 <td class="
-                  {% set qmedian = multiqc_data['report_general_stats_data'][0][sample_name ~ "_nanoplot_processed"]['Median read quality_fastq'] %}
+                  {% set qmedian = stats.median_read_quality %}
                   {% if qmedian < 15 %}
                     bg-red-200 text-red-800
                   {% elif qmedian < 20 %}
@@ -96,15 +99,15 @@
               </tr>
               <tr class="bg-white">
                 <td class="font-semibold">Read Length N50</td>
-                <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Read length N50_fastq"] }} bp</td>
+                <td>{{ stats.read_length_n50 }} bp</td>
               </tr>
               <tr class="bg-slate-50">
                 <td class="font-semibold">STDEV Read Length</td>
-                <td>{{ multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["STDEV read length_fastq"] }} bp</td>
+                <td>{{ stats.stdev_read_length }} bp</td>
               </tr>
               <tr class="bg-white">
                 <td class="font-semibold">Total Bases</td>
-                <td>{{ (multiqc_data["report_general_stats_data"][0][sample_name ~ "_nanoplot_processed"]["Total bases_fastq"] / 1_000_000)|round(1) }} Mbp</td>
+                <td>{{ (stats.total_bases / 1_000_000)|round(1) }} Mbp</td>
               </tr>
           </tbody>
         </table>
@@ -141,12 +144,13 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
     <h2 class="text-2xl font-semibold mt-5 mb-2">Abundance</h2>
     <p class="text-sm text-gray-600 mb-2">
       Species with low abundance (&lt;{{ (low_abundance_cutoff * 100) | round(2) }}%) are shown in light grey.
     </p>
-    {% if neg_control != sample_name %}
+    {% if sample_name not in neg_controls %}
       <p class="text-base font-semibold">{{ sample_name }}</p>
       <div class="sticky-table overflow-hidden">
         <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
@@ -155,11 +159,13 @@
         {{ legend }}
       </div>
     {% endif %}
-    <p class="text-base font-semibold mt-5">Negative control</p>
-    <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
-      {{ neg_control_table | safe }}
-    </div>
-    {{ legend_neg }}
+    {% for neg_control, neg_control_table in neg_control_tables.items() %}
+      <p class="text-base font-semibold mt-5">Negative control: {{ neg_control }}</p>
+      <div class="max-h-96 overflow-x-auto overflow-y-auto sticky-table">
+        {{ neg_control_table | safe }}
+      </div>
+      {{ legend_neg }}
+    {% endfor %}
 
   </div>
 </body>

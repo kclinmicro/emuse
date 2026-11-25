@@ -1,0 +1,44 @@
+tax_id	abundance	species	genus	family	order	class	phylum	clade	superkingdom	subspecies	species subgroup	species group	estimated counts
+432308	0.07185628742515164	Sphingobium rhizovicinum	Sphingobium	Sphingomonadaceae	Sphingomonadales	Alphaproteobacteria	Proteobacteria		Bacteria				60.00000000000162
+1834038	0.0023952095808383233	Undibacterium amnicola	Undibacterium	Oxalobacteraceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				2.0
+1119058	0.0011976047904191617	Undibacterium macrobrachii	Undibacterium	Oxalobacteraceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				1.0
+1165090	0.47904191616766467	Imtechella halotolerans	Imtechella	Flavobacteriaceae	Flavobacteriales	Flavobacteriia	Bacteroidetes	FCB group	Bacteria				400.0
+570278	0.049101796407183686	Allobacillus halotolerans	Allobacillus	Bacillaceae	Bacillales	Bacilli	Firmicutes	Terrabacteria group	Bacteria				40.99999999999838
+332249	0.17365269461077845	Truepera radiovictrix	Truepera	Trueperaceae	Trueperales	Deinococci	Deinococcus-Thermus	Terrabacteria group	Bacteria				145.0
+70584	0.05746685328710909	Aquabacterium parvum	Aquabacterium		Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				47.98482249473609
+378211	0.0011987049345711276	Methyloversatilis universalis	Methyloversatilis	Sterolibacteriaceae	Nitrosomonadales	Betaproteobacteria	Proteobacteria		Bacteria				1.0009186203668916
+630921	0.012934934459021774	Bradyrhizobium embrapense	Bradyrhizobium	Bradyrhizobiaceae	Rhizobiales	Alphaproteobacteria	Proteobacteria		Bacteria				10.800670273283181
+1904807	0.001889301204294682	Bradyrhizobium mercantei	Bradyrhizobium	Bradyrhizobiaceae	Rhizobiales	Alphaproteobacteria	Proteobacteria		Bacteria				1.5775665055860595
+1654716	0.001889301204294682	Bradyrhizobium viridifuturi	Bradyrhizobium	Bradyrhizobiaceae	Rhizobiales	Alphaproteobacteria	Proteobacteria		Bacteria				1.5775665055860595
+1437360	0.0012505349886762886	Bradyrhizobium erythrophlei	Bradyrhizobium	Bradyrhizobiaceae	Rhizobiales	Alphaproteobacteria	Proteobacteria		Bacteria				1.044196715544701
+1049583	0.005988023952095809	Kocuria indica	Kocuria	Micrococcaceae	Micrococcales	Actinobacteria	Actinobacteria	Terrabacteria group	Bacteria				5.0
+1119528	0.0011965046462671955	Methyloversatilis discipulorum	Methyloversatilis	Sterolibacteriaceae	Nitrosomonadales	Betaproteobacteria	Proteobacteria		Bacteria				0.9990813796331083
+2022747	0.027544910179640718	Elstera cyanobacteriorum	Elstera	Rhodospirillaceae	Rhodospirillales	Alphaproteobacteria	Proteobacteria		Bacteria				23.0
+155892	0.0011976047904191617	Caulobacter vibrioides	Caulobacter	Caulobacteraceae	Caulobacterales	Alphaproteobacteria	Proteobacteria		Bacteria				1.0
+247486	0.010778443134685543	Curvibacter fontanus	Curvibacter	Comamonadaceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				9.000000017462428
+180282	0.0011976047511789187	Delftia tsuruhatensis	Delftia	Comamonadaceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				0.9999999672343971
+80866	0.0011976048296594047	Delftia acidovorans	Delftia	Comamonadaceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				1.000000032765603
+592050	0.010778443113772455	Acidovorax soli	Acidovorax	Comamonadaceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				9.0
+13690	0.02874251497005988	Sphingobium yanoikuyae	Sphingobium	Sphingomonadaceae	Sphingomonadales	Alphaproteobacteria	Proteobacteria		Bacteria				24.0
+1747	0.005988023952095809	Cutibacterium acnes	Cutibacterium	Propionibacteriaceae	Propionibacteriales	Actinobacteria	Actinobacteria	Terrabacteria group	Bacteria				5.0
+70586	0.004808595814687311	Aquabacterium commune	Aquabacterium		Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				4.015177505263905
+47229	0.0011976304781388283	Massilia timonae	Massilia	Oxalobacteraceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				1.0000214492459216
+945844	0.0035927886835378183	Massilia oculi	Massilia	Oxalobacteraceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				2.9999785507540784
+34062	0.008383233532934131	Moraxella osloensis	Moraxella	Moraxellaceae	Pseudomonadales	Gammaproteobacteria	Proteobacteria		Bacteria				7.0
+2035356	0.005988023952095809	Reyranella aquatilis	Reyranella		Rhodospirillales	Alphaproteobacteria	Proteobacteria		Bacteria				5.0
+86182	0.0023952095808383238	Curvibacter lanceolatus	Curvibacter	Comamonadaceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				2.0000000000000004
+200476	0.003592814371257485	Methylorubrum podarium	Methylorubrum	Methylobacteriaceae	Rhizobiales	Alphaproteobacteria	Proteobacteria		Bacteria				3.0
+263	0.0011976047904191617	Francisella tularensis	Francisella	Francisellaceae	Thiotrichales	Gammaproteobacteria	Proteobacteria		Bacteria				1.0
+40214	0.0011976047904191617	Acinetobacter johnsonii	Acinetobacter	Moraxellaceae	Pseudomonadales	Gammaproteobacteria	Proteobacteria		Bacteria				1.0
+1886786	0.0011976047904191617	Sphingobium naphthae	Sphingobium	Sphingomonadaceae	Sphingomonadales	Alphaproteobacteria	Proteobacteria		Bacteria				1.0
+374425	0.003592814371257485	Methylobacterium komagatae	Methylobacterium	Methylobacteriaceae	Rhizobiales	Alphaproteobacteria	Proteobacteria		Bacteria				3.0
+332163	0.0011976047904191617	Candidatus Solibacter usitatus	Candidatus Solibacter	Solibacteraceae	Bryobacterales	Acidobacteriia	Acidobacteria		Bacteria				1.0
+360054	0.0023952095808383233	Bryobacter aggregatus	Bryobacter	Bryobacteraceae	Bryobacterales	Acidobacteriia	Acidobacteria		Bacteria				2.0
+1839799	0.003592814371257485	Streptococcus sp. FDAARGOS_192	Streptococcus	Streptococcaceae	Lactobacillales	Bacilli	Firmicutes	Terrabacteria group	Bacteria				3.0
+450365	0.0011976047695060744	Aquabacterium fontiphilum	Aquabacterium		Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				0.9999999825375722
+480	0.0023952095808383233	Moraxella catarrhalis	Moraxella	Moraxellaceae	Pseudomonadales	Gammaproteobacteria	Proteobacteria		Bacteria				2.0
+2052837	0.0011976047904191617	Neisseriaceae bacterium DSM 100970		Neisseriaceae	Neisseriales	Betaproteobacteria	Proteobacteria		Bacteria				1.0
+76731	0.0011976047904191617	Roseateles depolymerans	Roseateles		Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				1.0
+32013	0.0011976047904191617	Comamonas terrigena	Comamonas	Comamonadaceae	Burkholderiales	Betaproteobacteria	Proteobacteria		Bacteria				1.0
+unmapped	0.0												0.0
+mapped_unclassified	0.0												3.0

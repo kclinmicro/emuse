@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [dev]
+
+### Added
+
+- [#37](https://github.com/kclinmicro/emuse/pull/37) Added `compare_to_negative_controls` for comparing a sample against one or more negative controls, and `summary_stats` for reading the summary statistics from MultiQC. The report uses both, and `--neg-control` (`-n`) now takes one or more negative controls (by @ryanjameskennedy)
+
 ## [1.2.0]
 
 ### Added

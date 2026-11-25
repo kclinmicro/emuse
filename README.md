@@ -59,7 +59,7 @@ Run the report generator using the installed command:
 emuse --input-dir <results_directory> \
                  --output-file <output_file> \
                  --sample-name <sample_name> \
-                 --neg-control <negative_control_name> \
+                 --neg-control <negative_control_name> [<negative_control_name> ...] \
                  [--config config.toml] \
                  [--prob-score] \
                  [--alignment-metrics]
@@ -106,7 +106,7 @@ emuse \
 | `--input-dir`         | `-i`  | Yes      | Path to the directory containing TRANA pipeline results                                                     |
 | `--output-file`       | `-o`  | Yes      | Name of the output html report to be generated                                                              |
 | `--sample-name`       | `-s`  | Yes      | Name of the sample to generate the report for                                                               |
-| `--neg-control`       | `-n`  | Yes      | Name of the negative control sample                                                                         |
+| `--neg-control`       | `-n`  | Yes      | Name of one or more negative control samples                                                                |
 | `--config`            | `-c`  | No       | Path to configuration file (default: the bundled default `emuse/data/configs/config.toml`)                  |
 | `--prob-score`        | `-p`  | No       | Include the generation and addition of probability scores in the report                                     |
 | `--alignment-metrics` | `-m`  | No       | Include metrics based on the raw alignment of reads to the database (percent identity and percent coverage) |
@@ -186,11 +186,11 @@ included in the table. These can be added by supplying the argument
 - **Green rows** indicate species absent in negative control or species whose
 normalised abundance in the sample exceeds the configured enrichment fold cutoff
 relative to the negative control. Normalised abundance is calculated through
-comparing the abundance of species to the abundance of spike species.
+comparing the abundance of species to the abundance of spike species. When multiple negative controls are used, this condition must be met for each negative control.
 
-#### Negative Control Table
+#### Negative Control Table(s)
 
-A table summarizing the negative control sample, with the same first 6 columns as the
+One or more tables summarizing the negative control sample(s), with the same first 6 columns as the
 previous table.
 
 **Color coding:**
