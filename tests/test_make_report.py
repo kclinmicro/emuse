@@ -9,7 +9,10 @@ from emuse.negative_control import compare_to_negative_controls
 import pandas as pd
 import pysam
 from pytest import fail, mark, raises
+import shutil
+import sys
 import tempfile
+from pathlib import Path
 
 # An example sequence to be used in multiple tests
 seq = "CGGCTTAGAGGCGGCTGCGCGTAGTGCTGCTGATTATATTTCGGCGCTATATCGCTGATGATCGTCGATACGTACTGCTAGCTGCATCTGATCGATCGTC"
@@ -244,3 +247,35 @@ def test_compare_to_negative_controls():
 
     assert flags["enriched"].tolist() == [True, False, False, False]
     assert flags["absent_in_controls"].tolist() == [False, False, False, True]
+
+
+def test_make_report_with_only_emu_input(tmp_path):
+    input_results_dir = Path(__file__).parent / "data" / "results"
+    sample_name = "zymomock01"
+    neg_control = "zymoNEGmock"
+
+    input_dir = tmp_path / "emu_results"
+    results_dir = input_dir / "results"
+    results_dir.mkdir(parents=True)
+    for path in input_results_dir.glob("*.tsv"):
+        if path.name.startswith((sample_name, neg_control)):
+            shutil.copy(path, results_dir)
+
+    output_file = tmp_path / "report.html"
+
+    result = sp.run(
+        [
+            sys.executable,
+            "-m",
+            "emuse.make_report",
+            "--input-dir", str(input_dir),
+            "--sample-name", sample_name,
+            "--neg-control", neg_control,
+            "--output-file", str(output_file),
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert output_file.exists()

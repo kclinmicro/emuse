@@ -25,9 +25,9 @@
       <div class="bg-blue-200 text-white rounded-xl px-10 py-8 w-full text-center">
         <h1 class="text-6xl font-bold text-gray-800">
           {% if analysis_type == "its" %}
-            ITS TRANA Report
+            ITS Emuse Report
           {% else %}
-            16S TRANA Report
+            16S Emuse Report
           {% endif %}
         </h1>
       </div>
@@ -41,10 +41,13 @@
         <div class="pl-8"><strong>Run</strong>: {{ input_dir }}</div>
         <!-- Row 2 -->
         <div><strong>Date</strong>: {{ today }}</div>
+        {% if pipeline_version %}
         <div class="pl-8"><strong>Pipeline version</strong>: TRANA v{{ pipeline_version }}</div>
+        {% endif %}
       </div>
     </div>
 
+    {% if stats %}
     <h2 class="text-2xl font-semibold mb-10 mb-2">Summary Statistics</h2>
     <div class="flex gap-6">
       <div class="w-2/5">
@@ -141,6 +144,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
     <h2 class="text-2xl font-semibold mt-5 mb-2">Abundance</h2>
     <p class="text-sm text-gray-600 mb-2">
